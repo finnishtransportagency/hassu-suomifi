@@ -30,8 +30,8 @@ export class CdkpipelinesSuomifiPipelineStack extends Stack {
 
     // This is where we add the application stages
     // ...
-    // pipeline.addStage(new CdkpipelinesSuomifiStage(this, 'Dev', {
-    //   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION }
-    // }));
+    pipeline.addStage(new CdkpipelinesSuomifiStage(this, 'Dev', {
+      env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION }
+    }));
   }
 }
