@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://hassudev.vaylapilvi.fi/SAML2SP">
+    <md:Extensions xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport">
+        <mdattr:EntityAttributes xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+            <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Name="FinnishAuthMethod" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://ftn.ficora.fi/2017/loa3</saml:AttributeValue>
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://eidas.europa.eu/LoA/high</saml:AttributeValue>
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://ftn.ficora.fi/2017/loa2</saml:AttributeValue>
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">http://eidas.europa.eu/LoA/substantial</saml:AttributeValue>
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">urn:oid:1.2.246.517.3002.110.999</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" FriendlyName="VtjVerificationRequired" Name="urn:oid:1.2.246.517.3003.111.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">true</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" FriendlyName="SkipEndpointValidationWhenSigned" Name="urn:oid:1.2.246.517.3003.111.4" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">false</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" FriendlyName="EidasSupport" Name="urn:oid:1.2.246.517.3003.111.14" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">full</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" FriendlyName="CipherName" Name="urn:oid:1.2.246.517.3003.111.26" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">AES-GCM</saml:AttributeValue>
+            </saml:Attribute>
+        </mdattr:EntityAttributes>
+    </md:Extensions>
+    <md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:Extensions>
+            <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+                <mdui:DisplayName xml:lang="fi">Valtion liikenneväylien suunnittelu</mdui:DisplayName>
+                <mdui:DisplayName xml:lang="sv">Planering av statens trafikleder</mdui:DisplayName>
+                <mdui:DisplayName xml:lang="en">State transport network planning</mdui:DisplayName>
+                <mdui:Logo height="54" width="327">https://hassudev.testivaylapilvi.fi/images/vayla_logo.png</mdui:Logo>
+                <mdui:Description xml:lang="fi">Kansalaisten, sidosryhmien ja viranomaisten välinen maanteiden ja rautateiden lakisääteisten suunnitelmien vuorovaikutuskanava</mdui:Description>
+                <mdui:Description xml:lang="sv">Samverkanskanal för medborgare, intressenter och myndigheter om lagstadgade planer för landsvägar och järnvägar.</mdui:Description>
+                <mdui:Description xml:lang="en">Interaction channel between citizens, stakeholders and authorities on statutory plans for roads and railways.</mdui:Description>
+                <mdui:PrivacyStatementURL xml:lang="fi">https://hassudev.testivaylapilvi.fi/rekisteriseloste_fi.html</mdui:PrivacyStatementURL>
+                <mdui:PrivacyStatementURL xml:lang="sv">https://hassudev.testivaylapilvi.fi/rekisteriseloste_sv.html</mdui:PrivacyStatementURL>
+                <mdui:PrivacyStatementURL xml:lang="en">https://hassudev.testivaylapilvi.fi/rekisteriseloste_en.html</mdui:PrivacyStatementURL>
+            </mdui:UIInfo>
+        </md:Extensions>
+        <md:KeyDescriptor>
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>MIIDljCCAn4CCQDtpASKi/c0kjANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMC
+                        ZmkxEDAOBgNVBAgMB3V1c2ltYWExETAPBgNVBAcMCGhlbHNpbmtpMQ4wDAYDVQQK
+                        DAV2YXlsYTEkMCIGA1UEAwwbaGFzc3VkZXYudGVzdGl2YXlsYXBpbHZpLmZpMSIw
+                        IAYJKoZIhvcNAQkBFhNoYXNzdS10dWtpQHZheWxhLmZpMB4XDTIxMDkyOTEzMTQ0
+                        N1oXDTIyMDkyOTEzMTQ0N1owgYwxCzAJBgNVBAYTAmZpMRAwDgYDVQQIDAd1dXNp
+                        bWFhMREwDwYDVQQHDAhoZWxzaW5raTEOMAwGA1UECgwFdmF5bGExJDAiBgNVBAMM
+                        G2hhc3N1ZGV2LnRlc3RpdmF5bGFwaWx2aS5maTEiMCAGCSqGSIb3DQEJARYTaGFz
+                        c3UtdHVraUB2YXlsYS5maTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+                        AMcqtk2XoD3SvajsuOWADs5SlyU3IkqyEL+AR4FN2Y1gceyEB0Db3fVGs2D03eSC
+                        KQ16hiosrE0FGHGT7ubv4gF9LWi3dt//xuvuvIeoD35mqwpbFWtMwXV59tV6eSNl
+                        iZ/hdDjh7HSsEVRoG+4JpKOaui/hmhCY6wth9mdWtwgrXgWmQAHHSm12LsFuXhWA
+                        dieM2Jm6C29hHFjY54MAizBx6/ukjdML+UyeLsBPTOswUI+M4eUK5lY7ZogXpGR9
+                        m7VRzKjSKMMS4cJ9c6LP2YsearFjWc1DauJ67mS2qIdBKpm7PHWiC576y3V95wg4
+                        C214V9CgJtTmVE4wOwm8pqECAwEAATANBgkqhkiG9w0BAQUFAAOCAQEALOr8Kws+
+                        F6YdY7TStY77s0n6vxKGgvutk5ATntL6mF2yU76Zx2ZjhFPjdEvwI7Mq3ZtM3r+y
+                        6HAOdHOHNl4pFlPHEW54oOxii0Ke7dh7lhCA3rpQ1ekLjz+DYZZgjtM5hkhxxUxs
+                        L2tIF7OTpexF8SkSAK5igWTAQ9IJaZeZWoGC6ccfJQ5ccekIMNKMmlNW9Wwgzr35
+                        sCHj5uWkt1VXbUFsE4jZlZeYAwRBOXdNTZyRGsVSPoZmH9tY3PK/bN5UvfBN/tNu
+                        X9I8THLnIey42nvRs+PZ/WspWkI73cSFnFWySAVU+aiZyzgMGd/jRF57IrJet04x
+                        BjCnhFytKnqnHg==</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://hassudev.testivaylapilvi.fi/idp/profile/SAML2/SLO/Redirect" />
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/idp/profile/SAML2/SLO/POST" />
+        <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/idp/profile/SAML2/ACS/POST" index="1" isDefault="true" />
+        <md:AttributeConsumingService index="1" isDefault="true">
+            <md:ServiceName xml:lang="fi">Liikenneväylien suunnittelu</md:ServiceName>
+            <md:ServiceName xml:lang="sv">Planering av trafikleder</md:ServiceName>
+            <md:ServiceName xml:lang="en">Transport network planning</md:ServiceName>
+            <md:RequestedAttribute FriendlyName="kid" Name="urn:oid:1.2.246.517.3003.113.4" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="FirstName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="nationalIdentificationNumber" Name="urn:oid:1.2.246.21" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="displayName" Name="urn:oid:2.16.840.1.113730.3.1.241" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="cn" Name="urn:oid:2.5.4.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="sn" Name="urn:oid:2.5.4.4" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="givenName" Name="urn:oid:2.5.4.42" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenUlkomainenLahiosoite" Name="urn:oid:1.2.246.517.2002.2.11" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenUlkomainenLahiosoitePaikkakuntaJaValtioS" Name="urn:oid:1.2.246.517.2002.2.12" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenUlkomainenLahiosoitePaikkakuntaJaValtioR" Name="urn:oid:1.2.246.517.2002.2.13" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenUlkomainenLahiosoitePaikkakuntaJaValtioSelvakielinen" Name="urn:oid:1.2.246.517.2002.2.14" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenUlkomainenLahiosoiteValtiokoodi3" Name="urn:oid:1.2.246.517.2002.2.15" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="KotikuntaKuntanumero" Name="urn:oid:1.2.246.517.2002.2.18" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="KotikuntaKuntaS" Name="urn:oid:1.2.246.517.2002.2.19" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="KotikuntaKuntaR" Name="urn:oid:1.2.246.517.2002.2.20" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenKotimainenLahiosoiteS" Name="urn:oid:1.2.246.517.2002.2.4" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenKotimainenLahiosoiteR" Name="urn:oid:1.2.246.517.2002.2.5" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenKotimainenLahiosoitePostinumero" Name="urn:oid:1.2.246.517.2002.2.6" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenKotimainenLahiosoitePostitoimipaikkaS" Name="urn:oid:1.2.246.517.2002.2.7" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="VakinainenKotimainenLahiosoitePostitoimipaikkaR" Name="urn:oid:1.2.246.517.2002.2.8" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="mail" Name="urn:oid:0.9.2342.19200300.100.1.3" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="TurvakieltoTieto" Name="urn:oid:1.2.246.517.2002.2.27" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="FamilyName" Name="http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="DateOfBirth" Name="http://eidas.europa.eu/attributes/naturalperson/DateOfBirth" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+            <md:RequestedAttribute FriendlyName="PersonIdentifier" Name="http://eidas.europa.eu/attributes/naturalperson/PersonIdentifier" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" />
+        </md:AttributeConsumingService>
+    </md:SPSSODescriptor>
+    <md:Organization>
+        <md:OrganizationName xml:lang="fi">Väylävirasto ja ELY-keskus</md:OrganizationName>
+        <md:OrganizationName xml:lang="sv">Trafikledsverket och NTM-centralen</md:OrganizationName>
+        <md:OrganizationName xml:lang="en">FTIA and ELY centres</md:OrganizationName>
+        <md:OrganizationDisplayName xml:lang="fi">Väylävirasto ja ELY-keskus</md:OrganizationDisplayName>
+        <md:OrganizationDisplayName xml:lang="sv">Trafikledsverket och NTM-centralen</md:OrganizationDisplayName>
+        <md:OrganizationDisplayName xml:lang="en">FTIA and ELY centres</md:OrganizationDisplayName>
+        <md:OrganizationURL xml:lang="fi">https://vayla.fi/etusivu</md:OrganizationURL>
+        <md:OrganizationURL xml:lang="sv">https://vayla.fi/sv/framsida</md:OrganizationURL>
+        <md:OrganizationURL xml:lang="en">https://vayla.fi/en/frontpage</md:OrganizationURL>
+    </md:Organization>
+    <md:ContactPerson contactType="administrative">
+        <md:GivenName>suomifi</md:GivenName>
+        <md:SurName>tuki</md:SurName>
+        <md:EmailAddress>mailto:suomifi-tuki@vayla.fi</md:EmailAddress>
+    </md:ContactPerson>
+    <md:ContactPerson contactType="technical">
+        <md:GivenName>hassu</md:GivenName>
+        <md:SurName>yllapito</md:SurName>
+        <md:EmailAddress>mailto:hassu-yllapito@cgi.com</md:EmailAddress>
+    </md:ContactPerson>
+</md:EntityDescriptor>
