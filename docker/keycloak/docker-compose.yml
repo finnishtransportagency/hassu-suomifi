@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  keycloak:
+    image: hassu/keycloak-suomifi
+    environment:
+      DB_VENDOR: postgres
+      DB_ADDR: host.docker.internal
+      DB_PORT: 5432
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloakpass123
+      KEYCLOAK_USER: kcadmin
+      KEYCLOAK_PASSWORD: kcadminpass123
+    ports:
+      - "8080:8080"

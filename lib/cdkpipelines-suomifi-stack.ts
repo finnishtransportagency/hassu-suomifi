@@ -5,7 +5,8 @@ import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ssm from '@aws-cdk/aws-ssm';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as logs from '@aws-cdk/aws-logs';
-import { CfnOutput, Construct, Stack, StackProps } from '@aws-cdk/core';
+import * as rds from '@aws-cdk/aws-rds';
+import { CfnOutput, Construct, Stack, StackProps, SecretValue } from '@aws-cdk/core';
 import * as path from 'path';
 import { AlarmBase } from '@aws-cdk/aws-cloudwatch';
 
@@ -14,9 +15,9 @@ import { AlarmBase } from '@aws-cdk/aws-cloudwatch';
  */
 export class CdkpipelinesSuomifiStack extends Stack {
   /**
-   * The URL of the API Gateway endpoint, for use in the integ tests
+   * The URL of the keycloak rds, for use in the integ tests?
    */
-  public readonly urlOutput: CfnOutput;
+  public readonly dbAddress: CfnOutput;
  
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -56,12 +57,27 @@ export class CdkpipelinesSuomifiStack extends Stack {
     });
 
     const keycloakUserParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, 'KeycloakUserParam', {
-      parameterName: 'HassuKeycloakUser',
+      parameterName: '/dev/keycloak/keycloakUser',
       version: 1
     });
 
     const keycloakPasswordParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, 'KeycloakPasswordParam', {
-      parameterName: 'HassuKeycloakPassword',
+      parameterName: '/dev/keycloak/keycloakPassword',
+      version: 1
+    });
+
+    const keycloakDbUserParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, 'KeycloakDbUserParam', {
+      parameterName: '/dev/keycloak/dbUser',
+      version: 1
+    });
+
+    const keycloakDbPasswordParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, 'KeycloakDbPasswordParam', {
+      parameterName: '/dev/keycloak/dbPassword',
+      version: 1
+    });
+
+    const keycloakDbAddressParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, 'KeycloakDbAddressParam', {
+      parameterName: '/dev/keycloak/dbAddress',
       version: 1
     });
 
@@ -74,11 +90,17 @@ export class CdkpipelinesSuomifiStack extends Stack {
       image: ecs.ContainerImage.fromRegistry("jboss/keycloak"),
       environment: {
         ENV: 'dev',
-        FOO: 'bar'
+        FOO: 'bar',
+        DB_VENDOR: 'postgres',
+        DB_PORT: '5432',
+        DB_DATABASE: 'keycloak'
       },
       secrets: {
         KEYClOAK_USER: ecs.Secret.fromSsmParameter(keycloakUserParam),
-        KEUCLOAK_PASSWORD: ecs.Secret.fromSsmParameter(keycloakPasswordParam)
+        KEYCLOAK_PASSWORD: ecs.Secret.fromSsmParameter(keycloakPasswordParam),
+        DB_ADDR: ecs.Secret.fromSsmParameter(keycloakDbAddressParam),
+        DB_USER: ecs.Secret.fromSsmParameter(keycloakDbUserParam),
+        DB_PASSWORD: ecs.Secret.fromSsmParameter(keycloakDbPasswordParam)
       },
       portMappings:[{ containerPort: 8080 }],
       logging: ecs.LogDrivers.awsLogs({
@@ -98,30 +120,37 @@ export class CdkpipelinesSuomifiStack extends Stack {
       targets: [service.loadBalancerTarget({
         containerName: 'KeycloakContainer',
         containerPort: 8080
-      })]
+      })],
+      healthCheck: {
+        enabled: false,
+        port: '8080',
+        path: '/auth/'
+      }
     })
 
     // 3. RDS
+
+    const rdsinstance = new rds.DatabaseInstance(this, 'Instance', {
+      engine: rds.DatabaseInstanceEngine.postgres({ version: rds.PostgresEngineVersion.VER_13_3 }),
+      // optional, defaults to m5.large
+      // instanceType: ec2.InstanceType.of(...),
+      vpc,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE
+      },
+      credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1'))
+    });
 
     // 4. AppMesh
 
     // 5. CloudMap
 
-    // The Lambda function that contains the functionality
-    const handler = new lambda.Function(this, 'Lambda', {
-      runtime: lambda.Runtime.NODEJS_12_X,
-      handler: 'handler.handler',
-      code: lambda.Code.fromAsset(path.resolve(__dirname, 'lambda')),
-    });
 
-    // An API Gateway to make the Lambda web-accessible
-    const gw = new apigw.LambdaRestApi(this, 'Gateway', {
-      description: 'Endpoint for a simple Lambda-powered web service',
-      handler,
-    });
-
-    this.urlOutput = new CfnOutput(this, 'Url', {
-      value: gw.url,
-    });
+    // Outputs
+    this.dbAddress = new CfnOutput(this, 'DatabaseURL', {
+      value: rdsinstance.instanceEndpoint.hostname,
+      description: 'Host name of the postgres instance for keycloak',
+      exportName: 'dbAddress'
+    })
   }
 }

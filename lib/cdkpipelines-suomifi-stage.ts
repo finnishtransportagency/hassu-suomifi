@@ -5,7 +5,7 @@ import { CdkpipelinesSuomifiStack } from './cdkpipelines-suomifi-stack';
  * Deployable unit of web service app
  */
 export class CdkpipelinesSuomifiStage extends Stage {
-  public readonly urlOutput: CfnOutput;
+  public readonly dbAddress: CfnOutput;
   
   constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props);
@@ -13,6 +13,6 @@ export class CdkpipelinesSuomifiStage extends Stage {
     const service = new CdkpipelinesSuomifiStack(this, 'WebService');
     
     // Expose CdkpipelinesSuomifiStack's output one level higher
-    this.urlOutput = service.urlOutput;
+    this.dbAddress = service.dbAddress;
   }
 }
