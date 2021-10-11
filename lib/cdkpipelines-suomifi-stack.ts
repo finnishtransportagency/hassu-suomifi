@@ -6,7 +6,8 @@ import * as ssm from '@aws-cdk/aws-ssm';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as logs from '@aws-cdk/aws-logs';
 import * as rds from '@aws-cdk/aws-rds';
-import { CfnOutput, Construct, Stack, StackProps, SecretValue } from '@aws-cdk/core';
+import { CfnOutput, Construct, Stack, StackProps, SecretValue, Duration } from '@aws-cdk/core';
+import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
 import * as path from 'path';
 import { AlarmBase } from '@aws-cdk/aws-cloudwatch';
 
@@ -45,8 +46,45 @@ export class CdkpipelinesSuomifiStack extends Stack {
       http2Enabled: true,
       securityGroup
     });
+
+
+    // 3. RDS
+
+    const rdsinstance = new rds.DatabaseInstance(this, 'Instance', {
+      engine: rds.DatabaseInstanceEngine.postgres({ version: rds.PostgresEngineVersion.VER_13_3 }),
+      // optional, defaults to m5.large
+      // instanceType: ec2.InstanceType.of(...),
+      vpc,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE
+      },
+      credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1'))
+    });
+
+    new ssm.StringParameter(this, "DbAddressParameter", {
+      parameterName: "/dev/keycloak/dbAddress",
+      description: "Description for your parameter",
+      stringValue: rdsinstance.instanceEndpoint.hostname
+    });
+
+    // 5. AppMesh
+
+    // 6. CloudMap
+
+    const cloudMapNamespace = new servicediscovery.PrivateDnsNamespace(this, 'Namespace', {
+      name: 'devsuomifi.local',
+      vpc,
+    });
+
+    const suomifiservice = cloudMapNamespace.createService('Service', {
+      dnsRecordType: servicediscovery.DnsRecordType.A_AAAA,
+      dnsTtl: Duration.seconds(30)
+    });
+
+    // const cloudMapOptions = 
     
-    // 3. ECS Cluster, Service, Task, Container, LogGroup
+
+    // 4. ECS Cluster, Service, Task, Container, LogGroup
     const cluster = new ecs.Cluster(this, 'ECSCluster', {
       vpc: vpc
     });
@@ -76,7 +114,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       version: 1
     });
 
-    const keycloakDbAddressParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, 'KeycloakDbAddressParam', {
+    const keycloakDbAddressParam = ssm.StringParameter.fromStringParameterAttributes(this, 'KeycloakDbAddressParam', {
       parameterName: '/dev/keycloak/dbAddress',
       version: 1
     });
@@ -111,7 +149,8 @@ export class CdkpipelinesSuomifiStack extends Stack {
     const service = new ecs.FargateService(this, 'Service', {
       cluster,
       taskDefinition,
-      desiredCount: 2
+      desiredCount: 2,
+      // servicediscovery
     });
 
     const listener = alb.addListener('Listener', { port: 80});
@@ -127,23 +166,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
         path: '/auth/'
       }
     })
-
-    // 3. RDS
-
-    const rdsinstance = new rds.DatabaseInstance(this, 'Instance', {
-      engine: rds.DatabaseInstanceEngine.postgres({ version: rds.PostgresEngineVersion.VER_13_3 }),
-      // optional, defaults to m5.large
-      // instanceType: ec2.InstanceType.of(...),
-      vpc,
-      vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE
-      },
-      credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1'))
-    });
-
-    // 4. AppMesh
-
-    // 5. CloudMap
 
 
     // Outputs
