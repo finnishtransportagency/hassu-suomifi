@@ -122,7 +122,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         containerPort: 8080
       })],
       healthCheck: {
-        enabled: false,
+        enabled: true,
         port: '8080',
         path: '/auth/'
       }
