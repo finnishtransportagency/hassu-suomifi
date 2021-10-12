@@ -47,17 +47,16 @@ export class CdkpipelinesSuomifiStack extends Stack {
       securityGroup
     });
 
-
     // 3. RDS
     const rdsinstance = new rds.DatabaseCluster(this, 'db', {
-      engine: rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
+      engine: rds.DatabaseClusterEngine.auroraPostgres({version: rds.AuroraPostgresEngineVersion.VER_13_3}),
       credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1')),
       instanceProps: {
         // optional , defaults to t3.medium
         // instanceType: ec2.InstanceType.of(...),
         vpc,
         vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED
         }
       }
     });
