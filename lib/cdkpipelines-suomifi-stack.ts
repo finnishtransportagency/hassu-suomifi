@@ -49,22 +49,23 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
 
     // 3. RDS
-
-    const rdsinstance = new rds.DatabaseInstance(this, 'Instance', {
-      engine: rds.DatabaseInstanceEngine.postgres({ version: rds.PostgresEngineVersion.VER_13_3 }),
-      // optional, defaults to m5.large
-      // instanceType: ec2.InstanceType.of(...),
-      vpc,
-      vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE
-      },
-      credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1'))
+    const rdsinstance = new rds.DatabaseCluster(this, 'db', {
+      engine: rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
+      credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1')),
+      instanceProps: {
+        // optional , defaults to t3.medium
+        // instanceType: ec2.InstanceType.of(...),
+        vpc,
+        vpcSubnets: {
+          subnetType: ec2.SubnetType.PRIVATE
+        }
+      }
     });
 
     new ssm.StringParameter(this, "DbAddressParameter", {
       parameterName: "/dev/keycloak/dbAddress",
       description: "Description for your parameter",
-      stringValue: rdsinstance.instanceEndpoint.hostname
+      stringValue: rdsinstance.clusterEndpoint.hostname
     });
 
     // 5. AppMesh
@@ -79,10 +80,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
     const suomifiservice = cloudMapNamespace.createService('Service', {
       dnsRecordType: servicediscovery.DnsRecordType.A_AAAA,
       dnsTtl: Duration.seconds(30)
-    });
-
-    // const cloudMapOptions = 
-    
+    });    
 
     // 4. ECS Cluster, Service, Task, Container, LogGroup
     const cluster = new ecs.Cluster(this, 'ECSCluster', {
@@ -149,8 +147,11 @@ export class CdkpipelinesSuomifiStack extends Stack {
     const service = new ecs.FargateService(this, 'Service', {
       cluster,
       taskDefinition,
-      desiredCount: 2,
-      // servicediscovery
+      desiredCount: 2
+    });
+
+    service.associateCloudMapService({
+      service: suomifiservice
     });
 
     const listener = alb.addListener('Listener', { port: 80});
@@ -170,7 +171,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     // Outputs
     this.dbAddress = new CfnOutput(this, 'DatabaseURL', {
-      value: rdsinstance.instanceEndpoint.hostname,
+      value: rdsinstance.clusterEndpoint.hostname,
       description: 'Host name of the postgres instance for keycloak',
       exportName: 'dbAddress'
     })
