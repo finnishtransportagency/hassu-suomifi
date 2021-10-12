@@ -56,7 +56,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         // instanceType: ec2.InstanceType.of(...),
         vpc,
         vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_ISOLATED
+          subnetType: ec2.SubnetType.PRIVATE
         }
       }
     });
