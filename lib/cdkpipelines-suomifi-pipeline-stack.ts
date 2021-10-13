@@ -19,7 +19,10 @@ export class CdkpipelinesSuomifiPipelineStack extends Stack {
          input: CodePipelineSource.gitHub('finnishtransportagency/hassu-suomifi', 'main'),
          
          // Install dependencies, build and run cdk synth
+         // uninstall and install for some version conflicts, need min. cdk cli 1.127.0 
          commands: [
+            //'npm uninstall aws-cdk',
+            //'npm install -g aws-cdk',
             'npm ci',
             'npm run build',
             'npx cdk synth'
