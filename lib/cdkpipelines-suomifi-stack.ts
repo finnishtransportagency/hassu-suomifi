@@ -1,15 +1,12 @@
-import * as apigw from '@aws-cdk/aws-apigateway';
-import * as lambda from '@aws-cdk/aws-lambda';
 import * as loadbalance from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ssm from '@aws-cdk/aws-ssm';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as logs from '@aws-cdk/aws-logs';
 import * as rds from '@aws-cdk/aws-rds';
-import { CfnOutput, Construct, Stack, StackProps, SecretValue, Duration } from '@aws-cdk/core';
+import { CfnOutput, Construct, Stack, StackProps, SecretValue, Duration, Fn } from '@aws-cdk/core';
 import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
-import * as path from 'path';
-import { AlarmBase } from '@aws-cdk/aws-cloudwatch';
+import { WafConfig } from './waf2Config';
 
 /**
  * A stack for our simple Lambda-powered web service
@@ -45,6 +42,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
       vpcSubnets: {onePerAz: true},
       http2Enabled: true,
       securityGroup
+    });
+
+    // attach waf to lb
+    new WafConfig(this, "Hassu-WAF", {
+      alb,
+      allowedAddresses: Fn.split("\n", ssm.StringParameter.fromStringParameterAttributes(this, 'allowed-ip-ssm-parameter', {
+        parameterName: '/dev/WAFAllowedAddresses'
+      }).stringValue),
     });
 
     // 3. RDS
@@ -125,10 +130,12 @@ export class CdkpipelinesSuomifiStack extends Stack {
       image: ecs.ContainerImage.fromRegistry("jboss/keycloak"),
       environment: {
         ENV: 'dev',
-        FOO: 'bar',
+        KEYCLOAK_FRONTEND_URL: 'hassudev.testivaylapilvi.fi',
         DB_VENDOR: 'postgres',
         DB_PORT: '5432',
-        DB_DATABASE: 'keycloak'
+        DB_DATABASE: 'keycloak',
+        JGROUPS_DISCOVERY_PROTOCOL: 'dns.DNS_PING',
+        JGROUPS_DISCOVERY_PROPERTIES: 'dns_query=devsuomifi.local'
       },
       secrets: {
         KEYClOAK_USER: ecs.Secret.fromSsmParameter(keycloakUserParam),
