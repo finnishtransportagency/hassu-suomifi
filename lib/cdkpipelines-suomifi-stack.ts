@@ -46,7 +46,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     // attach waf to lb
     new WafConfig(this, "Hassu-WAF", {
-      alb,
+      resource: alb,
       allowedAddresses: Fn.split("\n", ssm.StringParameter.fromStringParameterAttributes(this, 'allowed-ip-ssm-parameter', {
         parameterName: '/dev/WAFAllowedAddresses'
       }).stringValue),

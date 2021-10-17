@@ -5,7 +5,7 @@ const cdk = require("@aws-cdk/core");
 const waf2 = require("@aws-cdk/aws-wafv2");
 
 export class WafConfig extends cdk.Construct {
-  constructor(scope: constructs.Construct, id: string, { resource, allowedAddresses: allowedAddresses }: any) {
+  constructor(scope: constructs.Construct, id: string, { resource: resource, allowedAddresses: allowedAddresses }: any) {
     super(scope, id);
 
     const allowedIPSet = new waf2.CfnIPSet(this, "VaylapilviIPSet", {
@@ -47,7 +47,7 @@ export class WafConfig extends cdk.Construct {
     const acl = new waf2.CfnWebACL(this, "ACL", props);
 
     const association = new waf2.CfnWebACLAssociation(this, "APIAssoc", {
-      resourceArn: resource.arn,
+      resourceArn: resource.loadBalancerArn, // too bad it isn't universal construct.arn, but specific for loadbalancer
       webAclArn: acl.attrArn,
     });
 
