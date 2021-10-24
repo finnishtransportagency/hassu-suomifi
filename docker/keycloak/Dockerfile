@@ -2,8 +2,11 @@ FROM jboss/keycloak
 
 COPY ./lib/postgresql-42.2.24.jar /opt/jboss/keycloak/modules/system/layers/keycloak/org/postgresql/main/
 COPY ./conf/jboss/postgresql/module.xml /opt/jboss/keycloak/modules/system/layers/keycloak/org/postgresql/main/
-#COPY ./conf/jboss/standalone.xml /opt/jboss/keycloak/standalone/configuration/
-#COPY ./conf/jboss/standalone-ha.xml /opt/jboss/keycloak/standalone/configuration/
-#COPY custom-scripts/ /opt/jboss/startup-scripts/
+RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' /opt/jboss/keycloak/standalone/configuration/standalone.xml
+RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' /opt/jboss/keycloak/standalone/configuration/standalone-ha.xml
+RUN sed -i -e 's/\/auth\//\/keycloak\/auth\//' /opt/jboss/keycloak/welcome-content/index.html
 
+COPY ./conf/keycloak/suomifi-realm-export.json /opt/jboss/keycloak/standalone/tmp/
+
+# uncomment for debugging purposes and to keep container alive
 #ENTRYPOINT [ "tail", "-f", "/dev/null" ]

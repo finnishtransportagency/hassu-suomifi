@@ -2,11 +2,13 @@ import * as loadbalance from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ssm from '@aws-cdk/aws-ssm';
 import * as ecs from '@aws-cdk/aws-ecs';
+import * as ecr from '@aws-cdk/aws-ecr';
 import * as logs from '@aws-cdk/aws-logs';
 import * as rds from '@aws-cdk/aws-rds';
 import { CfnOutput, Construct, Stack, StackProps, SecretValue, Duration, Fn } from '@aws-cdk/core';
 import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
 import { WafConfig } from './waf2Config';
+import { Repository } from '@aws-cdk/aws-ecr';
 
 /**
  * A stack for our simple Lambda-powered web service
@@ -126,8 +128,10 @@ export class CdkpipelinesSuomifiStack extends Stack {
       retention: logs.RetentionDays.TWO_WEEKS
     });
     
+    //TODO: add repo creation and maybe keycloak docker image build in the cdk?
+    const repository = Repository.fromRepositoryName(this, 'KeycloakRepo', 'hassu-keycloak-repo');
     const container = taskDefinition.addContainer('KeycloakContainer', {
-      image: ecs.ContainerImage.fromRegistry("jboss/keycloak"),
+      image: ecs.ContainerImage.fromEcrRepository(repository),
       environment: {
         ENV: 'dev',
         KEYCLOAK_FRONTEND_URL: 'hassudev.testivaylapilvi.fi',
@@ -135,7 +139,8 @@ export class CdkpipelinesSuomifiStack extends Stack {
         DB_PORT: '5432',
         DB_DATABASE: 'keycloak',
         JGROUPS_DISCOVERY_PROTOCOL: 'dns.DNS_PING',
-        JGROUPS_DISCOVERY_PROPERTIES: 'dns_query=devsuomifi.local'
+        JGROUPS_DISCOVERY_PROPERTIES: 'dns_query=devsuomifi.local',
+        //KEYCLOAK_IMPORT: '/opt/jboss/keycloak/standalone/tmp/suomifi-realm-export.json'
       },
       secrets: {
         KEYClOAK_USER: ecs.Secret.fromSsmParameter(keycloakUserParam),
