@@ -94,8 +94,8 @@ export class CdkpipelinesSuomifiStack extends Stack {
     });
 
     const taskDefinition = new ecs.FargateTaskDefinition(this, 'TaskDefinition', {
-      memoryLimitMiB: 512,
-      cpu: 256
+      memoryLimitMiB: 1024,
+      cpu: 512
     });
 
     const keycloakUserParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, 'KeycloakUserParam', {
@@ -155,10 +155,17 @@ export class CdkpipelinesSuomifiStack extends Stack {
       })
     });
 
+    const ecsSecurityGroup = new ec2.SecurityGroup(this, 'ECSSecurityGroup', {
+      vpc,
+      allowAllOutbound: true
+    })
+    ecsSecurityGroup.connections.allowTo(rdsinstance, ec2.Port.tcp(5432), 'RDS connection');
+
     const service = new ecs.FargateService(this, 'Service', {
       cluster,
       taskDefinition,
-      desiredCount: 2
+      desiredCount: 2,
+      securityGroups: [securityGroup, ecsSecurityGroup]
     });
 
     service.associateCloudMapService({
@@ -175,7 +182,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       healthCheck: {
         enabled: true,
         port: '8080',
-        path: '/auth/'
+        path: '/keycloak/auth/'
       }
     })
 
