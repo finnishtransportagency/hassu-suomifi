@@ -143,7 +143,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         //KEYCLOAK_IMPORT: '/opt/jboss/keycloak/standalone/tmp/suomifi-realm-export.json'
       },
       secrets: {
-        KEYClOAK_USER: ecs.Secret.fromSsmParameter(keycloakUserParam),
+        KEYCLOAK_USER: ecs.Secret.fromSsmParameter(keycloakUserParam),
         KEYCLOAK_PASSWORD: ecs.Secret.fromSsmParameter(keycloakPasswordParam),
         DB_ADDR: ecs.Secret.fromSsmParameter(keycloakDbAddressParam),
         DB_USER: ecs.Secret.fromSsmParameter(keycloakDbUserParam),
