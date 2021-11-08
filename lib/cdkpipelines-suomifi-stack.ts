@@ -134,6 +134,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       image: ecs.ContainerImage.fromEcrRepository(repository),
       environment: {
         ENV: 'dev',
+        KEYCLOAK_FRONTEND_URL: 'https://hassudev.testivaylapilvi.fi/keycloak/auth',
         DB_VENDOR: 'postgres',
         DB_PORT: '5432',
         DB_DATABASE: 'keycloak',
