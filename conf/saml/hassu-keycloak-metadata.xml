@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<md:EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://hassudev.testivaylapilvi.fi/keycloak/auth/realms/suomifi" ID="ID_d48631c9-3c9d-4f9a-9281-cfbf554299f5">
+    <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="false">
+        <md:KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:KeyName>ojamZY9vVYj9zgRHDhRzMQLgcwkTskWvuEWGh-Yp3AU</ds:KeyName>
+                <ds:X509Data>
+                    <ds:X509Certificate>
+MIID/jCCAmYCCQDzRz7jawoVhTANBgkqhkiG9w0BAQsFADBBMQswCQYDVQQGEwJmaTEMMAoGA1UECgwDY2dpMSQwIgYDVQQDDBtoYXNzdWRldi50ZXN0aXZheWxhcGlsdmkuZmkwHhcNMjExMTA5MDk0NjQ2WhcNMjIxMTA0MDk0NjQ2WjBBMQswCQYDVQQGEwJmaTEMMAoGA1UECgwDY2dpMSQwIgYDVQQDDBtoYXNzdWRldi50ZXN0aXZheWxhcGlsdmkuZmkwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQD0fW2zdQLiQsk6cgxsMBAniueEtP97UeTp0DNkohv/9rMeLkxf9TiW22urN37sYVUMVeHxNVsrjlh4gVRcBIjVp4pP17qEf4cTdZaUuS1dZSkkTh4/rILXiFBT8BsWFi2daJnKcd2ia2FRU2PNiYfmLuUJQemUxzPPxd+yPjvanWQWRCzTE0OLFr5+jcDfj/zpoBkAXrWRLofas7/qP2MhrhmIPCZrOjSsSil9qiMfLk1Dp0FkXPc1QgHSl2HaoMHdsgUBnJKHgKWDSJ4r8u/gATp93pLWoGeEIjdBlNlrOXWMq8NF4eH134HsMPUP1c9jjpmNMqv7LObuTz4DYSRSJab4yXmpd0JCXnivYQD1PgH11mUhwPoP7ivlriFiLVT5rL1QQJFE7K24BGCucoy6ei/mHc85VFebBEs4is5zy4KGv4XJmBhbp7lPC6EqHJ+XdshUayLQEQyhueHFMGhw5XL/U7zTpvV1gSyz0qsaTQT0v+5QeqYY/oRYWxf9RDcCAwEAATANBgkqhkiG9w0BAQsFAAOCAYEA7XdaFjlpsbeSVI+IEjeI8sE8vu+CouMuPGmByulHmyEBIydGejhRyeAxqnsw7UmZcS+dNXPWLp+QJK1001rr1Ajc3via3TzxoZuixLSwd/lxc5Ktua3OlOqCAsW/yfXfK4Ys1Gp0NfBYIPZd0nO/PJzaECT29iaskQWWuODWR3aiVt0jnyOB7X9/KhgWwQlMF5EoM2W8TqAlGASqyFwzm/8xtlE01tX+j4WaqMX0crf7BOAZXEHvYIV4Wi6B2EjJL/WPj8QkeDsIIqrdKWpIES9WzPrFsoTM5udP0nHhhZeKnJGB99vcfjQdRvoCA0ndjPfbd+gFPCh/e6Z8pKywkvqN3x4HkyLUaBSULkOjxEOV7mU2IS3Lr9lXZ0jtHimuq5RVdMU4WHhOh3zvn98VoX4wOadGxlzr+605/TDd2JDIMYRWTThwYsF2TNPi6C94KeHHVGo8eXid1IV5QbuL0G3r7+DQE43WQAye/n68emdMT7bduUlDHdybCrznXjth
+</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:KeyDescriptor use="signing">
+            <ds:KeyInfo>
+                <ds:KeyName>cHszyHeDUTi_3KyF6PIwgvkDN-6OpHcS5RZ4LC0pIF4</ds:KeyName>
+                <ds:X509Data>
+                    <ds:X509Certificate>
+MIICnTCCAYUCBgF8/6tRxjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdzdW9taWZpMB4XDTIxMTEwODEzMDgxMFoXDTMxMTEwODEzMDk1MFowEjEQMA4GA1UEAwwHc3VvbWlmaTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIT0Ez4A/QmIM+wGUNlxh2hCwqxzljy/madsYoJ2Mr/DLrR+jBMNp8educ+BF+ap/n9XjqGf0izLiox5qS97IOY6a7p77II3I1fhoo7zfkVJ61ADyBV3Qk5JvLw5Cr/pvx/4OYNtV3kDdwz5jLxF0ifIJTlvXpRD/Onq7yNhM/mWvHTnedUBY4YKpiSo3m5Qx+aNzomaa8+zs1v9ik8IBfTG/xYUkLXvUAIe5MDie46JtbZOmqlmKWFXXVbPadEtieDve0hsuhNzoMbAvI3NtN8aLouHbvxsEUs1eknth2gyEaeE6dn7UmRlMH61mYHOcH9wMQjRaXLKn5szOt9CH3UCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAajoeKJ4BLFFxQ6gN/GPOCUfa4Ur2tEHdYGxCAOoFzvud5vL8mrSlJxvTK8qUUpnOwUUp61hnDaL9OJ/AO4Gn8S84Lf02UpWzY3IQUwWifdqZEjrFhD5jGyuKs9KOScVqmOBbxQkkY6T4hj3xdRZ/+wJ47LQVS6tKqVu5whuummzA6no3SCK8rt/fRQblCTp10RZOnrC4dewRbL58QU17HfQkjFgpl5I/mXWmMcVHnL0k6QZOvIDceXmoHmJMWbCT5dwS3dUsz20oUEpV35wXZL1QNsY/9mHiEASjJbnS68zdnwtZxO9PiBTOE+bvsveOUKq0m0dqS81fFHc+gN8gmQ==
+</ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/keycloak/auth/realms/suomifi/broker/suomifi-saml/endpoint" />
+        <md:NameIDFormat>
+urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+</md:NameIDFormat>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/keycloak/auth/realms/suomifi/broker/suomifi-saml/endpoint" isDefault="true" index="1" />
+        <md:AttributeConsumingService isDefault="true" index="1" />
+    </md:SPSSODescriptor>
+</md:EntityDescriptor>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://hassudev.vaylapilvi.fi/SAML2SP">
+<md:EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" entityID="https://hassudev.testivaylapilvi.fi/keycloak/auth/realms/suomifi">
     <md:Extensions xmlns:alg="urn:oasis:names:tc:SAML:metadata:algsupport">
         <mdattr:EntityAttributes xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
             <saml:Attribute xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" Name="FinnishAuthMethod" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
@@ -29,7 +29,7 @@
                 <mdui:DisplayName xml:lang="fi">Valtion liikenneväylien suunnittelu</mdui:DisplayName>
                 <mdui:DisplayName xml:lang="sv">Planering av statens trafikleder</mdui:DisplayName>
                 <mdui:DisplayName xml:lang="en">State transport network planning</mdui:DisplayName>
-                <mdui:Logo height="54" width="327">https://hassudev.testivaylapilvi.fi/images/vayla_logo.png</mdui:Logo>
+                <mdui:Logo height="54" width="327">https://hassudev.testivaylapilvi.fi/vayla-600px.jpg</mdui:Logo>
                 <mdui:Description xml:lang="fi">Kansalaisten, sidosryhmien ja viranomaisten välinen maanteiden ja rautateiden lakisääteisten suunnitelmien vuorovaikutuskanava</mdui:Description>
                 <mdui:Description xml:lang="sv">Samverkanskanal för medborgare, intressenter och myndigheter om lagstadgade planer för landsvägar och järnvägar.</mdui:Description>
                 <mdui:Description xml:lang="en">Interaction channel between citizens, stakeholders and authorities on statutory plans for roads and railways.</mdui:Description>
@@ -39,35 +39,28 @@
             </mdui:UIInfo>
         </md:Extensions>
         <md:KeyDescriptor>
-            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+            <ds:KeyInfo>
+                <ds:KeyName>ojamZY9vVYj9zgRHDhRzMQLgcwkTskWvuEWGh-Yp3AU</ds:KeyName>
                 <ds:X509Data>
-                    <ds:X509Certificate>MIIDljCCAn4CCQDtpASKi/c0kjANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMC
-                        ZmkxEDAOBgNVBAgMB3V1c2ltYWExETAPBgNVBAcMCGhlbHNpbmtpMQ4wDAYDVQQK
-                        DAV2YXlsYTEkMCIGA1UEAwwbaGFzc3VkZXYudGVzdGl2YXlsYXBpbHZpLmZpMSIw
-                        IAYJKoZIhvcNAQkBFhNoYXNzdS10dWtpQHZheWxhLmZpMB4XDTIxMDkyOTEzMTQ0
-                        N1oXDTIyMDkyOTEzMTQ0N1owgYwxCzAJBgNVBAYTAmZpMRAwDgYDVQQIDAd1dXNp
-                        bWFhMREwDwYDVQQHDAhoZWxzaW5raTEOMAwGA1UECgwFdmF5bGExJDAiBgNVBAMM
-                        G2hhc3N1ZGV2LnRlc3RpdmF5bGFwaWx2aS5maTEiMCAGCSqGSIb3DQEJARYTaGFz
-                        c3UtdHVraUB2YXlsYS5maTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-                        AMcqtk2XoD3SvajsuOWADs5SlyU3IkqyEL+AR4FN2Y1gceyEB0Db3fVGs2D03eSC
-                        KQ16hiosrE0FGHGT7ubv4gF9LWi3dt//xuvuvIeoD35mqwpbFWtMwXV59tV6eSNl
-                        iZ/hdDjh7HSsEVRoG+4JpKOaui/hmhCY6wth9mdWtwgrXgWmQAHHSm12LsFuXhWA
-                        dieM2Jm6C29hHFjY54MAizBx6/ukjdML+UyeLsBPTOswUI+M4eUK5lY7ZogXpGR9
-                        m7VRzKjSKMMS4cJ9c6LP2YsearFjWc1DauJ67mS2qIdBKpm7PHWiC576y3V95wg4
-                        C214V9CgJtTmVE4wOwm8pqECAwEAATANBgkqhkiG9w0BAQUFAAOCAQEALOr8Kws+
-                        F6YdY7TStY77s0n6vxKGgvutk5ATntL6mF2yU76Zx2ZjhFPjdEvwI7Mq3ZtM3r+y
-                        6HAOdHOHNl4pFlPHEW54oOxii0Ke7dh7lhCA3rpQ1ekLjz+DYZZgjtM5hkhxxUxs
-                        L2tIF7OTpexF8SkSAK5igWTAQ9IJaZeZWoGC6ccfJQ5ccekIMNKMmlNW9Wwgzr35
-                        sCHj5uWkt1VXbUFsE4jZlZeYAwRBOXdNTZyRGsVSPoZmH9tY3PK/bN5UvfBN/tNu
-                        X9I8THLnIey42nvRs+PZ/WspWkI73cSFnFWySAVU+aiZyzgMGd/jRF57IrJet04x
-                        BjCnhFytKnqnHg==</ds:X509Certificate>
+                    <ds:X509Certificate>
+                        MIID/jCCAmYCCQDzRz7jawoVhTANBgkqhkiG9w0BAQsFADBBMQswCQYDVQQGEwJmaTEMMAoGA1UECgwDY2dpMSQwIgYDVQQDDBtoYXNzdWRldi50ZXN0aXZheWxhcGlsdmkuZmkwHhcNMjExMTA5MDk0NjQ2WhcNMjIxMTA0MDk0NjQ2WjBBMQswCQYDVQQGEwJmaTEMMAoGA1UECgwDY2dpMSQwIgYDVQQDDBtoYXNzdWRldi50ZXN0aXZheWxhcGlsdmkuZmkwggGiMA0GCSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQD0fW2zdQLiQsk6cgxsMBAniueEtP97UeTp0DNkohv/9rMeLkxf9TiW22urN37sYVUMVeHxNVsrjlh4gVRcBIjVp4pP17qEf4cTdZaUuS1dZSkkTh4/rILXiFBT8BsWFi2daJnKcd2ia2FRU2PNiYfmLuUJQemUxzPPxd+yPjvanWQWRCzTE0OLFr5+jcDfj/zpoBkAXrWRLofas7/qP2MhrhmIPCZrOjSsSil9qiMfLk1Dp0FkXPc1QgHSl2HaoMHdsgUBnJKHgKWDSJ4r8u/gATp93pLWoGeEIjdBlNlrOXWMq8NF4eH134HsMPUP1c9jjpmNMqv7LObuTz4DYSRSJab4yXmpd0JCXnivYQD1PgH11mUhwPoP7ivlriFiLVT5rL1QQJFE7K24BGCucoy6ei/mHc85VFebBEs4is5zy4KGv4XJmBhbp7lPC6EqHJ+XdshUayLQEQyhueHFMGhw5XL/U7zTpvV1gSyz0qsaTQT0v+5QeqYY/oRYWxf9RDcCAwEAATANBgkqhkiG9w0BAQsFAAOCAYEA7XdaFjlpsbeSVI+IEjeI8sE8vu+CouMuPGmByulHmyEBIydGejhRyeAxqnsw7UmZcS+dNXPWLp+QJK1001rr1Ajc3via3TzxoZuixLSwd/lxc5Ktua3OlOqCAsW/yfXfK4Ys1Gp0NfBYIPZd0nO/PJzaECT29iaskQWWuODWR3aiVt0jnyOB7X9/KhgWwQlMF5EoM2W8TqAlGASqyFwzm/8xtlE01tX+j4WaqMX0crf7BOAZXEHvYIV4Wi6B2EjJL/WPj8QkeDsIIqrdKWpIES9WzPrFsoTM5udP0nHhhZeKnJGB99vcfjQdRvoCA0ndjPfbd+gFPCh/e6Z8pKywkvqN3x4HkyLUaBSULkOjxEOV7mU2IS3Lr9lXZ0jtHimuq5RVdMU4WHhOh3zvn98VoX4wOadGxlzr+605/TDd2JDIMYRWTThwYsF2TNPi6C94KeHHVGo8eXid1IV5QbuL0G3r7+DQE43WQAye/n68emdMT7bduUlDHdybCrznXjth
+                    </ds:X509Certificate>
                 </ds:X509Data>
             </ds:KeyInfo>
         </md:KeyDescriptor>
-        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://hassudev.testivaylapilvi.fi/idp/profile/SAML2/SLO/Redirect" />
-        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/idp/profile/SAML2/SLO/POST" />
+        <md:KeyDescriptor>
+            <ds:KeyInfo>
+                <ds:KeyName>cHszyHeDUTi_3KyF6PIwgvkDN-6OpHcS5RZ4LC0pIF4</ds:KeyName>
+                <ds:X509Data>
+                    <ds:X509Certificate>
+                        MIICnTCCAYUCBgF8/6tRxjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdzdW9taWZpMB4XDTIxMTEwODEzMDgxMFoXDTMxMTEwODEzMDk1MFowEjEQMA4GA1UEAwwHc3VvbWlmaTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIT0Ez4A/QmIM+wGUNlxh2hCwqxzljy/madsYoJ2Mr/DLrR+jBMNp8educ+BF+ap/n9XjqGf0izLiox5qS97IOY6a7p77II3I1fhoo7zfkVJ61ADyBV3Qk5JvLw5Cr/pvx/4OYNtV3kDdwz5jLxF0ifIJTlvXpRD/Onq7yNhM/mWvHTnedUBY4YKpiSo3m5Qx+aNzomaa8+zs1v9ik8IBfTG/xYUkLXvUAIe5MDie46JtbZOmqlmKWFXXVbPadEtieDve0hsuhNzoMbAvI3NtN8aLouHbvxsEUs1eknth2gyEaeE6dn7UmRlMH61mYHOcH9wMQjRaXLKn5szOt9CH3UCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAajoeKJ4BLFFxQ6gN/GPOCUfa4Ur2tEHdYGxCAOoFzvud5vL8mrSlJxvTK8qUUpnOwUUp61hnDaL9OJ/AO4Gn8S84Lf02UpWzY3IQUwWifdqZEjrFhD5jGyuKs9KOScVqmOBbxQkkY6T4hj3xdRZ/+wJ47LQVS6tKqVu5whuummzA6no3SCK8rt/fRQblCTp10RZOnrC4dewRbL58QU17HfQkjFgpl5I/mXWmMcVHnL0k6QZOvIDceXmoHmJMWbCT5dwS3dUsz20oUEpV35wXZL1QNsY/9mHiEASjJbnS68zdnwtZxO9PiBTOE+bvsveOUKq0m0dqS81fFHc+gN8gmQ==
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/keycloak/auth/realms/suomifi/broker/suomifi-saml/endpoint" />
         <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
-        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/idp/profile/SAML2/ACS/POST" index="1" isDefault="true" />
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://hassudev.testivaylapilvi.fi/keycloak/auth/realms/suomifi/broker/suomifi-saml/endpoint" isDefault="true" index="1" />
         <md:AttributeConsumingService index="1" isDefault="true">
             <md:ServiceName xml:lang="fi">Liikenneväylien suunnittelu</md:ServiceName>
             <md:ServiceName xml:lang="sv">Planering av trafikleder</md:ServiceName>

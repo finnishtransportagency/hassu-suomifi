@@ -8,5 +8,10 @@ RUN sed -i -e 's/\/auth\//\/keycloak\/auth\//' /opt/jboss/keycloak/welcome-conte
 
 COPY ./conf/keycloak/suomifi-realm-export.json /opt/jboss/keycloak/standalone/tmp/
 
+USER root
+ENV TZ=Europe/Helsinki
+RUN microdnf update
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && microdnf clean all
+
 # uncomment for debugging purposes and to keep container alive
-#ENTRYPOINT [ "tail", "-f", "/dev/null" ]
+# ENTRYPOINT [ "tail", "-f", "/dev/null" ]
