@@ -9,6 +9,7 @@ import { CfnOutput, Construct, Stack, StackProps, SecretValue, Duration, Fn } fr
 import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
 import { WafConfig } from './waf2Config';
 import { Repository } from '@aws-cdk/aws-ecr';
+import * as cognito from  '@aws-cdk/aws-cognito';
 
 /**
  * A stack for our simple Lambda-powered web service
@@ -74,9 +75,9 @@ export class CdkpipelinesSuomifiStack extends Stack {
       stringValue: rdsinstance.clusterEndpoint.hostname
     });
 
-    // 5. AppMesh
+    // 4. AppMesh
 
-    // 6. CloudMap
+    // 5. CloudMap
 
     const cloudMapNamespace = new servicediscovery.PrivateDnsNamespace(this, 'Namespace', {
       name: 'devsuomifi.local',
@@ -88,7 +89,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       dnsTtl: Duration.seconds(30)
     });    
 
-    // 4. ECS Cluster, Service, Task, Container, LogGroup
+    // 6. ECS Cluster, Service, Task, Container, LogGroup
     const cluster = new ecs.Cluster(this, 'ECSCluster', {
       vpc: vpc
     });
@@ -186,6 +187,30 @@ export class CdkpipelinesSuomifiStack extends Stack {
       }
     })
 
+    // 7. Cognito with OpenID Connect
+    const userpool = new cognito.UserPool(this, 'hassu-userpool', {
+      userPoolName: 'dev-hassu-userpool',
+    });
+
+    //identityprovider OpenID Connect or SAML aren't supported yet by CDK
+    //const identityprovider = cognito.UserPoolIdentityProviderOpenID(this, 'OpenIDKeycloakProvider', {
+    //  ...
+    //})
+
+    const userpoolclient = userpool.addClient('hassu-app-client', {
+      oAuth: {
+        flows: {
+          implicitCodeGrant: true,
+        },
+        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.PROFILE],
+        callbackUrls: ["https://hassudev.testivaylapilvi.fi/"],
+        logoutUrls: ["https://vayla.fi/"],
+      },
+      //supportedIdentityProviders: [cognito.UserPoolClientIdentityProvider.OPENID],
+    });
+    //If the identity provider and the app client are created in the same stack, specify the dependency between 
+    // both constructs to make sure that the identity provider already exists when the app client will be created
+    //client.node.addDependency(identityprovider);
 
     // Outputs
     this.dbAddress = new CfnOutput(this, 'DatabaseURL', {
