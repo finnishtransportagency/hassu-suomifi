@@ -215,6 +215,13 @@ export class CdkpipelinesSuomifiStack extends Stack {
       version: 1
     });
 
+    console.log("json string from ssm:")
+    console.log(providerDetailsParam.stringValue);
+
+    console.log("parsed json object:");
+    console.log(JSON.parse(providerDetailsParam.stringValue));
+    
+
     const openIDProviderProperties:idp.OpenIDProviderProperties = {
       userpoolId: userpool.userPoolId,
       providerName: "suomi.fi",
