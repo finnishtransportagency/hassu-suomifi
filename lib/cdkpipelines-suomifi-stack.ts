@@ -210,25 +210,20 @@ export class CdkpipelinesSuomifiStack extends Stack {
     //   tokenUrl: "",
     //   jwksUri: ""
     // }
-    const providerDetailsParam = ssm.StringParameter.fromStringParameterAttributes(this, 'ProviderDetailsParam', {
-      parameterName: '/dev/keycloak/oidcproviderdetails',
-      version: 1
-    });
+    const providerDetailsParam = ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/oidcproviderdetails');
 
-    console.log("json string from ssm:")
-    console.log(providerDetailsParam.stringValue);
+    console.log("json string from ssm: " + providerDetailsParam);
 
     console.log("parsed json object:");
-    console.log(JSON.parse(providerDetailsParam.stringValue));
-    
+    console.log(JSON.parse(providerDetailsParam));
 
     const openIDProviderProperties:idp.OpenIDProviderProperties = {
       userpoolId: userpool.userPoolId,
       providerName: "suomi.fi",
       providerType: "OIDC",
       idpIdentifiers: ["SuomiFiIdentifier"],
-      attributeMapping: JSON.parse("{'email':'email', 'sub':'username'}"),
-      providerDetails: JSON.parse(providerDetailsParam.stringValue)
+      attributeMapping: JSON.parse("{\"email\":\"email\", \"sub\":\"username\"}"),
+      providerDetails: JSON.parse(providerDetailsParam)
     }
 
     const userpoolidentityprovider = new idp.CognitoOpenIDProvider(this, 'UserPoolIDP', openIDProviderProperties);
