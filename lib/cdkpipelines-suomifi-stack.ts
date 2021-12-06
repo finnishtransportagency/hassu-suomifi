@@ -212,6 +212,10 @@ export class CdkpipelinesSuomifiStack extends Stack {
     // }
     const providerDetailsParam = ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/oidcproviderdetails');
 
+    console.log("provider details from ssM: " + providerDetailsParam);
+    console.log("parsed json: " + JSON.parse(providerDetailsParam));
+    
+
     const attributeMapping = {
       email: "email",
       sub: "username"
