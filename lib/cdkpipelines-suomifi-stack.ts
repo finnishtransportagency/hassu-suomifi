@@ -10,6 +10,7 @@ import * as servicediscovery from '@aws-cdk/aws-servicediscovery';
 import { WafConfig } from './waf2Config';
 import { Repository } from '@aws-cdk/aws-ecr';
 import * as cognito from  '@aws-cdk/aws-cognito';
+import * as idp from './UserpoolProviderOpenID';
 
 /**
  * A stack for our simple Lambda-powered web service
@@ -197,6 +198,34 @@ export class CdkpipelinesSuomifiStack extends Stack {
     //  ...
     //})
 
+    // this as a whole from ssm?
+    // const providerDetails:idp.OpenIDProviderDetails = {
+    //   authorizeScopes:["email","profile","openid"],
+    //   clientId: "",
+    //   clientSecret: "",
+    //   method: "POST",
+    //   oidcIssuer: "",
+    //   attributesUrl: "",
+    //   authorizeUrl: "",
+    //   tokenUrl: "",
+    //   jwksUri: ""
+    // }
+    const providerDetailsParam = ssm.StringParameter.fromStringParameterAttributes(this, 'ProviderDetailsParam', {
+      parameterName: '/dev/keycloak/oidcproviderdetails',
+      version: 1
+    });
+
+    const openIDProviderProperties:idp.OpenIDProviderProperties = {
+      userpoolId: userpool.userPoolId,
+      providerName: "suomi.fi",
+      providerType: "OIDC",
+      idpIdentifiers: ["SuomiFiIdentifier"],
+      attributeMapping: JSON.parse("{'email':'email', 'sub':'username'}"),
+      providerDetails: JSON.parse(providerDetailsParam.stringValue)
+    }
+
+    const userpoolidentityprovider = new idp.CognitoOpenIDProvider(this, 'UserPoolIDP', openIDProviderProperties);
+
     const userpoolclient = userpool.addClient('hassu-app-client', {
       oAuth: {
         flows: {
@@ -206,11 +235,17 @@ export class CdkpipelinesSuomifiStack extends Stack {
         callbackUrls: ["https://hassudev.testivaylapilvi.fi/"],
         logoutUrls: ["https://vayla.fi/"],
       },
-      //supportedIdentityProviders: [cognito.UserPoolClientIdentityProvider.OPENID],
+      supportedIdentityProviders: [cognito.UserPoolClientIdentityProvider.custom(openIDProviderProperties.providerName)],
     });
-    //If the identity provider and the app client are created in the same stack, specify the dependency between 
-    // both constructs to make sure that the identity provider already exists when the app client will be created
-    //client.node.addDependency(identityprovider);
+    // specify the dependency between  userpool app client and userpool identity provider
+    // to make sure that the identity provider already exists when the app client will be created
+    userpoolclient.node.addDependency(userpoolidentityprovider);
+
+    userpool.addDomain('hassu-cognito-domain', {
+      cognitoDomain: {
+        domainPrefix: 'dev-hassu-tunnistautuminen',
+      },
+    });
 
     // Outputs
     this.dbAddress = new CfnOutput(this, 'DatabaseURL', {
