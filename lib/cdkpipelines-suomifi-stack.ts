@@ -210,19 +210,19 @@ export class CdkpipelinesSuomifiStack extends Stack {
     //   tokenUrl: "",
     //   jwksUri: ""
     // }
-    const providerDetailsParam = ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/oidcproviderdetails');
+    const providerDetailsParam = ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/oidcproviderdetails');
 
-    console.log("json string from ssm: " + providerDetailsParam);
-
-    console.log("parsed json object:");
-    console.log(JSON.parse(providerDetailsParam));
+    const attributeMapping = {
+      email: "email",
+      sub: "username"
+    }
 
     const openIDProviderProperties:idp.OpenIDProviderProperties = {
       userpoolId: userpool.userPoolId,
       providerName: "suomi.fi",
       providerType: "OIDC",
       idpIdentifiers: ["SuomiFiIdentifier"],
-      attributeMapping: JSON.parse("{\"email\":\"email\", \"sub\":\"username\"}"),
+      attributeMapping,
       providerDetails: JSON.parse(providerDetailsParam)
     }
 

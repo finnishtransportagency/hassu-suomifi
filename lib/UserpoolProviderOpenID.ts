@@ -15,7 +15,7 @@ export interface OpenIDProviderDetails {
 }
 
 export interface OpenIDProviderProperties {
-    attributeMapping: JSON,
+    attributeMapping: any,
     idpIdentifiers: string[],
     providerDetails: OpenIDProviderDetails,
     providerName: string,
