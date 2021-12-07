@@ -198,23 +198,17 @@ export class CdkpipelinesSuomifiStack extends Stack {
     //  ...
     //})
 
-    // this as a whole from ssm?
-    // const providerDetails:idp.OpenIDProviderDetails = {
-    //   authorizeScopes:["email","profile","openid"],
-    //   clientId: "",
-    //   clientSecret: "",
-    //   method: "POST",
-    //   oidcIssuer: "",
-    //   attributesUrl: "",
-    //   authorizeUrl: "",
-    //   tokenUrl: "",
-    //   jwksUri: ""
-    // }
-    const providerDetailsParam = ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/oidcproviderdetails');
-
-    console.log("provider details from ssM: " + providerDetailsParam);
-    console.log("parsed json: " + JSON.parse(providerDetailsParam));
-    
+    const providerDetails:idp.OpenIDProviderDetails = {
+      authorizeScopes: ssm.StringListParameter.fromStringListParameterName(this, 'AuthorizeScopeStringList','/dev/keycloak/conf/authorizeScopes').stringListValue,
+      clientId: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/clientId'),
+      clientSecret: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/clientSecret'),
+      method: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/method'),
+      oidcIssuer: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/oidcIssuer'),
+      authorizeUrl: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/authorizeUrl'),
+      attributesUrl: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/attributesUrl'),
+      tokenUrl: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/tokenUrl'),
+      jwksUri: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/jwksUri')
+    }
 
     const attributeMapping = {
       email: "email",
@@ -227,7 +221,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       providerType: "OIDC",
       idpIdentifiers: ["SuomiFiIdentifier"],
       attributeMapping,
-      providerDetails: JSON.parse(providerDetailsParam)
+      providerDetails
     }
 
     const userpoolidentityprovider = new idp.CognitoOpenIDProvider(this, 'UserPoolIDP', openIDProviderProperties);
