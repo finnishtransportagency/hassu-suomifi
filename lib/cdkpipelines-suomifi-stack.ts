@@ -198,30 +198,30 @@ export class CdkpipelinesSuomifiStack extends Stack {
     //  ...
     //})
 
-    const providerDetails:idp.OpenIDProviderDetails = {
-      authorizeScopes: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/authorizeScopes'),
-      clientId: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientId'),
-      clientSecret: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientSecret'),
-      method: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/method'),
-      oidcIssuer: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/oidcIssuer'),
-      authorizeUrl: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/authorizeUrl'),
-      attributesUrl: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/attributesUrl'),
-      tokenUrl: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/tokenUrl'),
-      jwksUri: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/jwksUri')
+    const ProviderDetails:idp.OpenIDProviderDetails = {
+      authorize_scopes: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/authorizeScopes'),
+      client_id: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientId'),
+      client_secret: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientSecret'),
+      attributes_request_method: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/method'),
+      oidc_issuer: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/oidcIssuer'),
+      authorize_url: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/authorizeUrl'),
+      attributes_url: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/attributesUrl'),
+      token_url: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/tokenUrl'),
+      jwks_uri: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/jwksUri')
     }
 
-    const attributeMapping = {
+    const AttributeMapping = {
       email: "email",
       sub: "username"
     }
 
     const openIDProviderProperties:idp.OpenIDProviderProperties = {
-      userpoolId: userpool.userPoolId,
-      providerName: "suomi.fi",
-      providerType: "OIDC",
-      idpIdentifiers: ["SuomiFiIdentifier"],
-      attributeMapping,
-      providerDetails
+      UserPoolId: userpool.userPoolId,
+      ProviderName: "suomi.fi",
+      ProviderType: "OIDC",
+      IdpIdentifiers: ["SuomiFiIdentifier"],
+      AttributeMapping,
+      ProviderDetails
     }
 
     const userpoolidentityprovider = new idp.CognitoOpenIDProvider(this, 'UserPoolIDP', openIDProviderProperties);
@@ -235,7 +235,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         callbackUrls: ["https://hassudev.testivaylapilvi.fi/"],
         logoutUrls: ["https://vayla.fi/"],
       },
-      supportedIdentityProviders: [cognito.UserPoolClientIdentityProvider.custom(openIDProviderProperties.providerName)],
+      supportedIdentityProviders: [cognito.UserPoolClientIdentityProvider.custom(openIDProviderProperties.ProviderName)],
     });
     // specify the dependency between  userpool app client and userpool identity provider
     // to make sure that the identity provider already exists when the app client will be created
