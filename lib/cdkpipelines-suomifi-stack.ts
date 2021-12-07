@@ -199,7 +199,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
     //})
 
     const providerDetails:idp.OpenIDProviderDetails = {
-      authorizeScopes: ssm.StringListParameter.fromStringListParameterName(this, 'AuthorizeScopeStringList','/dev/keycloak/conf/authorizeScopes').stringListValue,
+      authorizeScopes: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/authorizeScopes'),
       clientId: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientId'),
       clientSecret: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientSecret'),
       method: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/method'),

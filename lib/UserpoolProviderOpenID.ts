@@ -7,7 +7,7 @@ export interface OpenIDProviderDetails {
     clientSecret: string,
     method: string,
     oidcIssuer: string,
-    authorizeScopes: string[],
+    authorizeScopes: string,
     authorizeUrl: string,
     tokenUrl: string,
     attributesUrl: string,

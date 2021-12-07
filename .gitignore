@@ -9,3 +9,4 @@ cdk.out
 
 # macos
 .DS_Store
+conf/aws/env.sh
