@@ -200,14 +200,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     const providerDetails:idp.OpenIDProviderDetails = {
       authorizeScopes: ssm.StringListParameter.fromStringListParameterName(this, 'AuthorizeScopeStringList','/dev/keycloak/conf/authorizeScopes').stringListValue,
-      clientId: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/clientId'),
-      clientSecret: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/clientSecret'),
-      method: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/method'),
-      oidcIssuer: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/oidcIssuer'),
-      authorizeUrl: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/authorizeUrl'),
-      attributesUrl: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/attributesUrl'),
-      tokenUrl: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/tokenUrl'),
-      jwksUri: ssm.StringParameter.valueFromLookup(this, '/dev/keycloak/conf/jwksUri')
+      clientId: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientId'),
+      clientSecret: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/clientSecret'),
+      method: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/method'),
+      oidcIssuer: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/oidcIssuer'),
+      authorizeUrl: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/authorizeUrl'),
+      attributesUrl: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/attributesUrl'),
+      tokenUrl: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/tokenUrl'),
+      jwksUri: ssm.StringParameter.valueForStringParameter(this, '/dev/keycloak/conf/jwksUri')
     }
 
     const attributeMapping = {
