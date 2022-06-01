@@ -56,19 +56,28 @@ export class CdkpipelinesSuomifiStack extends Stack {
       }).stringValue),
     });
 
-    // 3. RDS
-    const rdsinstance = new rds.DatabaseCluster(this, 'db', {
+    // 3. Aurora postgresql -> Aurora Serverless
+    const rdsinstance = new rds.ServerlessClusterFromSnapshot(this, 'Cluster', {
       engine: rds.DatabaseClusterEngine.auroraPostgres({version: rds.AuroraPostgresEngineVersion.VER_13_3}),
-      credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1')),
-      instanceProps: {
-        // optional , defaults to t3.medium
-        // instanceType: ec2.InstanceType.of(...),
-        vpc,
-        vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE
-        }
-      }
+      vpc,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE,
+      },
+      snapshotIdentifier: 'arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup',
     });
+    
+    // new rds.DatabaseCluster(this, 'db', {
+    //   engine: rds.DatabaseClusterEngine.auroraPostgres({version: rds.AuroraPostgresEngineVersion.VER_13_3}),
+    //   credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1')),
+    //   instanceProps: {
+    //     // optional , defaults to t3.medium
+    //     // instanceType: ec2.InstanceType.of(...),
+    //     vpc,
+    //     vpcSubnets: {
+    //       subnetType: ec2.SubnetType.PRIVATE
+    //     }
+    //   }
+    // });
 
     new ssm.StringParameter(this, "DbAddressParameter", {
       parameterName: "/dev/keycloak/dbAddress",
