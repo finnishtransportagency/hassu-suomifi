@@ -1,6 +1,5 @@
-import * as constructs from 'constructs';
-import * as cdk from '@aws-cdk/core';
-import * as cognito from '@aws-cdk/aws-cognito';
+import { Construct } from "constructs";
+import * as cognito from 'aws-cdk-lib/aws-cognito';
 
 export interface OpenIDProviderDetails {
     client_id: string,
@@ -23,8 +22,8 @@ export interface OpenIDProviderProperties {
     UserPoolId: string
 }
 
-export class CognitoOpenIDProvider extends cdk.Construct {
-    constructor(scope: constructs.Construct, id: string, props: OpenIDProviderProperties){
+export class CognitoOpenIDProvider extends Construct {
+    constructor(scope: Construct, id: string, props: OpenIDProviderProperties){
         super(scope,id);
 
         const cfnUserPoolIdentityProvider = new cognito.CfnUserPoolIdentityProvider(this, 'UserPoolIDP', {

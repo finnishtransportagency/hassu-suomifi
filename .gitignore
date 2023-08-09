@@ -2,6 +2,7 @@
 !jest.config.js
 *.d.ts
 node_modules
+*.iml
 
 # CDK asset staging directory
 .cdk.staging
@@ -10,3 +11,4 @@ cdk.out
 # macos
 .DS_Store
 conf/aws/env.sh
+/.env
