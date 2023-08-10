@@ -1,4 +1,4 @@
-FROM jboss/keycloak
+FROM 283563576583.dkr.ecr.eu-west-1.amazonaws.com/jboss/keycloak
 
 COPY ./lib/postgresql-42.2.24.jar /opt/jboss/keycloak/modules/system/layers/keycloak/org/postgresql/main/
 COPY ./conf/jboss/postgresql/module.xml /opt/jboss/keycloak/modules/system/layers/keycloak/org/postgresql/main/

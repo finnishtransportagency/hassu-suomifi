@@ -1,12 +1,13 @@
 import * as loadbalance from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ssm from "aws-cdk-lib/aws-ssm";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import { Repository } from "aws-cdk-lib/aws-ecr";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as rds from "aws-cdk-lib/aws-rds";
 import { Construct } from "constructs";
-import { CfnOutput, Duration, Fn, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, Duration, Fn, Stack, StackProps } from "aws-cdk-lib";
 import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
 import { WafConfig } from "./waf2Config";
 import * as cognito from "aws-cdk-lib/aws-cognito";
@@ -204,7 +205,10 @@ export class CdkpipelinesSuomifiStack extends Stack {
       "hassu-keycloak-repo"
     );
     const container = taskDefinition.addContainer("KeycloakContainer", {
-      image: ecs.ContainerImage.fromEcrRepository(repository),
+      image: ecs.ContainerImage.fromEcrRepository(
+        repository,
+        StringParameter.valueForStringParameter(this, "/dev/keycloak/imagehash")
+      ),
       environment: {
         ENV: "dev",
         KEYCLOAK_FRONTEND_URL:
@@ -266,6 +270,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         enabled: true,
         port: "8080",
         path: "/keycloak/auth/",
+        protocol: loadbalance.Protocol.HTTP,
       },
     });
 
