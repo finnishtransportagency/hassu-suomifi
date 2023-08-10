@@ -11,7 +11,6 @@ import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
 import { WafConfig } from "./waf2Config";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as idp from "./UserpoolProviderOpenID";
-import { BlockPublicAccess, Bucket } from "aws-cdk-lib/aws-s3";
 
 /**
  * A stack for our simple Lambda-powered web service
@@ -244,7 +243,9 @@ export class CdkpipelinesSuomifiStack extends Stack {
     const service = new ecs.FargateService(this, "Service", {
       cluster,
       taskDefinition,
-      desiredCount: 2,
+      desiredCount: 1,
+      minHealthyPercent: 100,
+      maxHealthyPercent: 200,
       securityGroups: [securityGroup, ecsSecurityGroup],
     });
 
