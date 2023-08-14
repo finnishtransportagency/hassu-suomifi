@@ -26,13 +26,13 @@ export class CdkpipelinesSuomifiStack extends Stack {
     super(scope, id, props);
 
     // 1. Get HASSU VPC
-    const vpcId = ssm.StringParameter.fromStringParameterAttributes(
-      this,
-      "vpc-ssm-parameter",
-      {
-        parameterName: "HassuVpcId",
-      }
-    ).stringValue;
+    // const vpcId = ssm.StringParameter.fromStringParameterAttributes(
+    //   this,
+    //   "vpc-ssm-parameter",
+    //   {
+    //     parameterName: "HassuVpcId",
+    //   }
+    // ).stringValue;
 
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {
       vpcId: "vpc-0689ac0f1efc74993",
@@ -204,7 +204,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       "KeycloakRepo",
       "hassu-keycloak-repo"
     );
-    const container = taskDefinition.addContainer("KeycloakContainer", {
+    taskDefinition.addContainer("KeycloakContainer", {
       image: ecs.ContainerImage.fromEcrRepository(
         repository,
         StringParameter.valueForStringParameter(this, "/dev/keycloak/imagehash")
@@ -258,7 +258,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
     });
 
     const listener = alb.addListener("Listener", { port: 80 });
-    const targetGroup = listener.addTargets("ECS", {
+    listener.addTargets("ECS", {
       port: 80,
       targets: [
         service.loadBalancerTarget({
@@ -325,14 +325,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     const AttributeMapping = {
       email: "email",
-      sub: "username",
+      // sub: "username",
     };
 
     const openIDProviderProperties: idp.OpenIDProviderProperties = {
       UserPoolId: userpool.userPoolId,
-      ProviderName: "suomi.fi",
+      ProviderName: "Suomi.fi",
       ProviderType: "OIDC",
-      IdpIdentifiers: ["SuomiFiIdentifier"],
+      IdpIdentifiers: [],
       AttributeMapping,
       ProviderDetails,
     };
@@ -344,11 +344,12 @@ export class CdkpipelinesSuomifiStack extends Stack {
     );
 
     const userpoolclient = userpool.addClient("hassu-app-client", {
+      userPoolClientName: "hassudev-app-client",
       oAuth: {
         flows: {
           implicitCodeGrant: true,
         },
-        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.PROFILE],
+        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
         callbackUrls: ["https://hassudev.testivaylapilvi.fi/"],
         logoutUrls: ["https://vayla.fi/"],
       },
@@ -362,7 +363,30 @@ export class CdkpipelinesSuomifiStack extends Stack {
     // to make sure that the identity provider already exists when the app client will be created
     userpoolclient.node.addDependency(userpoolidentityprovider);
 
-    userpool.addDomain("hassu-cognito-domain", {
+    const localUserpoolclient = userpool.addClient(
+      "hassu-app-client-localhost",
+      {
+        userPoolClientName: "localhost-app-client",
+        oAuth: {
+          flows: {
+            implicitCodeGrant: true,
+          },
+          scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
+          callbackUrls: ["http://localhost:3000/"],
+          logoutUrls: ["http://localhost:3000/"],
+        },
+        supportedIdentityProviders: [
+          cognito.UserPoolClientIdentityProvider.custom(
+            openIDProviderProperties.ProviderName
+          ),
+        ],
+      }
+    );
+    // specify the dependency between  userpool app client and userpool identity provider
+    // to make sure that the identity provider already exists when the app client will be created
+    localUserpoolclient.node.addDependency(userpoolidentityprovider);
+
+    const userPoolDomain = userpool.addDomain("hassu-cognito-domain", {
       cognitoDomain: {
         domainPrefix: "dev-hassu-tunnistautuminen",
       },
@@ -373,6 +397,22 @@ export class CdkpipelinesSuomifiStack extends Stack {
       value: rdsinstance.clusterEndpoint.hostname,
       description: "Host name of the postgres instance for keycloak",
       exportName: "dbAddress",
+    });
+
+    new StringParameter(this, "SuomifiLocalhostUserPoolClientId", {
+      parameterName: "/dev/outputs/SuomifiLocalhostUserPoolClientId",
+      stringValue: localUserpoolclient.userPoolClientId,
+      description: "Suomi.fi user pool client id for localhost",
+    });
+    new StringParameter(this, "SuomifiHassudevUserPoolClientId", {
+      parameterName: "/dev/outputs/SuomifiUserPoolClientId",
+      stringValue: userpoolclient.userPoolClientId,
+      description: "Suomi.fi user pool client id for hassudev",
+    });
+    new StringParameter(this, "SuomifiCognitoDomain", {
+      parameterName: "/dev/outputs/SuomifiCognitoDomain",
+      stringValue: userPoolDomain.baseUrl(),
+      description: "Suomi.fi cognito domain",
     });
   }
 }

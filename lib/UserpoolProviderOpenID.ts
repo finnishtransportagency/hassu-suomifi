@@ -25,8 +25,7 @@ export interface OpenIDProviderProperties {
 export class CognitoOpenIDProvider extends Construct {
     constructor(scope: Construct, id: string, props: OpenIDProviderProperties){
         super(scope,id);
-
-        const cfnUserPoolIdentityProvider = new cognito.CfnUserPoolIdentityProvider(this, 'UserPoolIDP', {
+        new cognito.CfnUserPoolIdentityProvider(this, 'UserPoolIDP', {
             providerName: props.ProviderName,
             providerType: props.ProviderType,
             userPoolId: props.UserPoolId,
