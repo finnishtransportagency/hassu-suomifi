@@ -293,7 +293,11 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     const AttributeMapping = {
       email: "email",
-      // sub: "username",
+      sub: "username",
+      address: "address",
+      hetu: "custom:hetu",
+      family_name: "family_name",
+      given_name: "given_name",
     };
 
     const openIDProviderProperties: idp.OpenIDProviderProperties = {
