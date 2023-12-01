@@ -44,12 +44,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
       allowAllOutbound: true,
       description: "Security group for Suomi.fi",
     });
-    // Allow all inbound traffic to security group
-    securityGroup.addIngressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.allTcp(),
-      "Allow all inbound traffic"
-    );
 
     const alb = new loadbalance.ApplicationLoadBalancer(this, "LoadBalancer", {
       vpc,
@@ -58,7 +52,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       http2Enabled: true,
       securityGroup,
     });
-
+    
     // attach waf to lb
     new WafConfig(this, "Hassu-WAF", {
       resource: alb,
@@ -91,19 +85,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
         maxCapacity: rds.AuroraCapacityUnit.ACU_8,
       },
     });
-
-    // new rds.DatabaseCluster(this, 'db', {
-    //   engine: rds.DatabaseClusterEngine.auroraPostgres({version: rds.AuroraPostgresEngineVersion.VER_13_3}),
-    //   credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1')),
-    //   instanceProps: {
-    //     // optional , defaults to t3.medium
-    //     // instanceType: ec2.InstanceType.of(...),
-    //     vpc,
-    //     vpcSubnets: {
-    //       subnetType: ec2.SubnetType.PRIVATE
-    //     }
-    //   }
-    // });
 
     new ssm.StringParameter(this, "DbAddressParameter", {
       parameterName: "/dev/keycloak/dbAddress",
@@ -349,9 +330,9 @@ export class CdkpipelinesSuomifiStack extends Stack {
         flows: {
           implicitCodeGrant: true,
         },
-        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
+        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
         callbackUrls: ["https://hassudev.testivaylapilvi.fi/"],
-        logoutUrls: ["https://vayla.fi/"],
+        logoutUrls: ["https://hassudev.testivaylapilvi.fi/"],
       },
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom(
@@ -371,7 +352,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
           flows: {
             implicitCodeGrant: true,
           },
-          scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
+          scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
           callbackUrls: ["http://localhost:3000/"],
           logoutUrls: ["http://localhost:3000/"],
         },

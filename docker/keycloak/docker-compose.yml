@@ -3,9 +3,7 @@ services:
   keycloak:
     image: hassu/keycloak-suomifi
     environment:
-      DB_VENDOR: postgres
-      DB_ADDR: host.docker.internal
-      DB_PORT: 5432
+      DB_VENDOR: h2
       DB_DATABASE: keycloak
       DB_USER: keycloak
       DB_PASSWORD: keycloakpass123
