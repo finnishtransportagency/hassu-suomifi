@@ -51,7 +51,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       http2Enabled: true,
       securityGroup,
     });
-    
+
     // 3. Aurora postgresql -> Aurora Serverless
     const rdsinstance = new rds.ServerlessClusterFromSnapshot(this, "Cluster", {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
@@ -242,6 +242,9 @@ export class CdkpipelinesSuomifiStack extends Stack {
     // 7. Cognito with OpenID Connect
     const userpool = new cognito.UserPool(this, "hassu-userpool", {
       userPoolName: "dev-hassu-userpool",
+      customAttributes: {
+        hetu: new cognito.StringAttribute({ mutable: true }),
+      },
     });
 
     //identityprovider OpenID Connect or SAML aren't supported yet by CDK
@@ -314,9 +317,21 @@ export class CdkpipelinesSuomifiStack extends Stack {
         flows: {
           implicitCodeGrant: true,
         },
-        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
-        callbackUrls: ["https://hassudev.testivaylapilvi.fi/", "https://hassutest.testivaylapilvi.fi/", "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/"],
-        logoutUrls: ["https://hassudev.testivaylapilvi.fi/", "https://hassutest.testivaylapilvi.fi/", "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/"],
+        scopes: [
+          cognito.OAuthScope.OPENID,
+          cognito.OAuthScope.EMAIL,
+          cognito.OAuthScope.PROFILE,
+        ],
+        callbackUrls: [
+          "https://hassudev.testivaylapilvi.fi/",
+          "https://hassutest.testivaylapilvi.fi/",
+          "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
+        ],
+        logoutUrls: [
+          "https://hassudev.testivaylapilvi.fi/",
+          "https://hassutest.testivaylapilvi.fi/",
+          "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
+        ],
       },
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom(
@@ -336,7 +351,11 @@ export class CdkpipelinesSuomifiStack extends Stack {
           flows: {
             implicitCodeGrant: true,
           },
-          scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
+          scopes: [
+            cognito.OAuthScope.OPENID,
+            cognito.OAuthScope.EMAIL,
+            cognito.OAuthScope.PROFILE,
+          ],
           callbackUrls: ["http://localhost:3000/"],
           logoutUrls: ["http://localhost:3000/"],
         },
