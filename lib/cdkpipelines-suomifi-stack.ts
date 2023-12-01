@@ -9,7 +9,6 @@ import * as rds from "aws-cdk-lib/aws-rds";
 import { Construct } from "constructs";
 import { CfnOutput, Duration, Fn, Stack, StackProps } from "aws-cdk-lib";
 import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
-import { WafConfig } from "./waf2Config";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as idp from "./UserpoolProviderOpenID";
 
@@ -53,21 +52,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
       securityGroup,
     });
     
-    // attach waf to lb
-    new WafConfig(this, "Hassu-WAF", {
-      resource: alb,
-      allowedAddresses: Fn.split(
-        "\n",
-        ssm.StringParameter.fromStringParameterAttributes(
-          this,
-          "allowed-ip-ssm-parameter",
-          {
-            parameterName: "/dev/WAFAllowedAddresses",
-          }
-        ).stringValue
-      ),
-    });
-
     // 3. Aurora postgresql -> Aurora Serverless
     const rdsinstance = new rds.ServerlessClusterFromSnapshot(this, "Cluster", {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
