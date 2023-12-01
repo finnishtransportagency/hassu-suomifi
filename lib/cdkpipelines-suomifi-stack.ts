@@ -315,8 +315,8 @@ export class CdkpipelinesSuomifiStack extends Stack {
           implicitCodeGrant: true,
         },
         scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
-        callbackUrls: ["https://hassudev.testivaylapilvi.fi/"],
-        logoutUrls: ["https://hassudev.testivaylapilvi.fi/"],
+        callbackUrls: ["https://hassudev.testivaylapilvi.fi/", "https://hassutest.testivaylapilvi.fi/", "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/"],
+        logoutUrls: ["https://hassudev.testivaylapilvi.fi/", "https://hassutest.testivaylapilvi.fi/", "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/"],
       },
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom(
