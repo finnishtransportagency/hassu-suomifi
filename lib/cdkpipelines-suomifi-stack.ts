@@ -7,7 +7,7 @@ import { Repository } from "aws-cdk-lib/aws-ecr";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as rds from "aws-cdk-lib/aws-rds";
 import { Construct } from "constructs";
-import { CfnOutput, Duration, Fn, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, Duration, Stack, StackProps } from "aws-cdk-lib";
 import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as idp from "./UserpoolProviderOpenID";
