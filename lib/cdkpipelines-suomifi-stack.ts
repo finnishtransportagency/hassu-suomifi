@@ -7,9 +7,8 @@ import { Repository } from "aws-cdk-lib/aws-ecr";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as rds from "aws-cdk-lib/aws-rds";
 import { Construct } from "constructs";
-import { CfnOutput, Duration, Fn, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, Duration, Stack, StackProps } from "aws-cdk-lib";
 import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
-import { WafConfig } from "./waf2Config";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as idp from "./UserpoolProviderOpenID";
 
@@ -44,12 +43,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
       allowAllOutbound: true,
       description: "Security group for Suomi.fi",
     });
-    // Allow all inbound traffic to security group
-    securityGroup.addIngressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.allTcp(),
-      "Allow all inbound traffic"
-    );
 
     const alb = new loadbalance.ApplicationLoadBalancer(this, "LoadBalancer", {
       vpc,
@@ -57,21 +50,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
       vpcSubnets: { onePerAz: true },
       http2Enabled: true,
       securityGroup,
-    });
-
-    // attach waf to lb
-    new WafConfig(this, "Hassu-WAF", {
-      resource: alb,
-      allowedAddresses: Fn.split(
-        "\n",
-        ssm.StringParameter.fromStringParameterAttributes(
-          this,
-          "allowed-ip-ssm-parameter",
-          {
-            parameterName: "/dev/WAFAllowedAddresses",
-          }
-        ).stringValue
-      ),
     });
 
     // 3. Aurora postgresql -> Aurora Serverless
@@ -91,19 +69,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
         maxCapacity: rds.AuroraCapacityUnit.ACU_8,
       },
     });
-
-    // new rds.DatabaseCluster(this, 'db', {
-    //   engine: rds.DatabaseClusterEngine.auroraPostgres({version: rds.AuroraPostgresEngineVersion.VER_13_3}),
-    //   credentials: rds.Credentials.fromPassword('postgres', SecretValue.ssmSecure('/dev/keycloak/postgresPassword', '1')),
-    //   instanceProps: {
-    //     // optional , defaults to t3.medium
-    //     // instanceType: ec2.InstanceType.of(...),
-    //     vpc,
-    //     vpcSubnets: {
-    //       subnetType: ec2.SubnetType.PRIVATE
-    //     }
-    //   }
-    // });
 
     new ssm.StringParameter(this, "DbAddressParameter", {
       parameterName: "/dev/keycloak/dbAddress",
@@ -277,6 +242,9 @@ export class CdkpipelinesSuomifiStack extends Stack {
     // 7. Cognito with OpenID Connect
     const userpool = new cognito.UserPool(this, "hassu-userpool", {
       userPoolName: "dev-hassu-userpool",
+      customAttributes: {
+        hetu: new cognito.StringAttribute({ mutable: true }),
+      },
     });
 
     //identityprovider OpenID Connect or SAML aren't supported yet by CDK
@@ -325,7 +293,11 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     const AttributeMapping = {
       email: "email",
-      // sub: "username",
+      sub: "username",
+      address: "address",
+      hetu: "custom:hetu",
+      family_name: "family_name",
+      given_name: "given_name",
     };
 
     const openIDProviderProperties: idp.OpenIDProviderProperties = {
@@ -349,9 +321,21 @@ export class CdkpipelinesSuomifiStack extends Stack {
         flows: {
           implicitCodeGrant: true,
         },
-        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
-        callbackUrls: ["https://hassudev.testivaylapilvi.fi/"],
-        logoutUrls: ["https://vayla.fi/"],
+        scopes: [
+          cognito.OAuthScope.OPENID,
+          cognito.OAuthScope.EMAIL,
+          cognito.OAuthScope.PROFILE,
+        ],
+        callbackUrls: [
+          "https://hassudev.testivaylapilvi.fi/",
+          "https://hassutest.testivaylapilvi.fi/",
+          "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
+        ],
+        logoutUrls: [
+          "https://hassudev.testivaylapilvi.fi/",
+          "https://hassutest.testivaylapilvi.fi/",
+          "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
+        ],
       },
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom(
@@ -371,7 +355,11 @@ export class CdkpipelinesSuomifiStack extends Stack {
           flows: {
             implicitCodeGrant: true,
           },
-          scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL],
+          scopes: [
+            cognito.OAuthScope.OPENID,
+            cognito.OAuthScope.EMAIL,
+            cognito.OAuthScope.PROFILE,
+          ],
           callbackUrls: ["http://localhost:3000/"],
           logoutUrls: ["http://localhost:3000/"],
         },
