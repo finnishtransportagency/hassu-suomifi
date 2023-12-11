@@ -244,6 +244,8 @@ export class CdkpipelinesSuomifiStack extends Stack {
       userPoolName: "dev-hassu-userpool",
       customAttributes: {
         hetu: new cognito.StringAttribute({ mutable: true }),
+        address2: new cognito.StringAttribute({ mutable: true }),
+        postOffice2: new cognito.StringAttribute({ mutable: true }),
       },
     });
 
@@ -295,6 +297,8 @@ export class CdkpipelinesSuomifiStack extends Stack {
       email: "email",
       sub: "username",
       address: "address",
+      address2: "custom:address2",
+      postOffice2: "custom:postOffice2",
       hetu: "custom:hetu",
       family_name: "family_name",
       given_name: "given_name",
