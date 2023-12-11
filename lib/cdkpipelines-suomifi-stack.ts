@@ -324,6 +324,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       oAuth: {
         flows: {
           implicitCodeGrant: true,
+          authorizationCodeGrant: true,
         },
         scopes: [
           cognito.OAuthScope.OPENID,
@@ -346,6 +347,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
           openIDProviderProperties.ProviderName
         ),
       ],
+      generateSecret: true,
     });
     // specify the dependency between  userpool app client and userpool identity provider
     // to make sure that the identity provider already exists when the app client will be created
@@ -358,6 +360,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         oAuth: {
           flows: {
             implicitCodeGrant: true,
+            authorizationCodeGrant: true,
           },
           scopes: [
             cognito.OAuthScope.OPENID,
@@ -372,6 +375,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
             openIDProviderProperties.ProviderName
           ),
         ],
+        generateSecret: true,
       }
     );
     // specify the dependency between  userpool app client and userpool identity provider
