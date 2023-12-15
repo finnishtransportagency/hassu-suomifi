@@ -12,7 +12,7 @@
     "synth:dev": "ENVIRONMENT=dev cdk synth",
     "diff:dev": "ENVIRONMENT=dev cdk diff",
     "log:ecs": "aws logs tail --follow --since 1h /ecs/hassu-suomifi",
-    "fetch-new-saml-certificates": "ts-node bin/fetch-new-saml-certificates.ts",
+    "fetch-new-saml-certificates": "ts-node bin/fetch-new-saml-certificates.ts"
   },
   "devDependencies": {
     "@aws-cdk/assert": "2.68.0",
