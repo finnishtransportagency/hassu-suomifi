@@ -1,6 +1,7 @@
 import { Construct } from "constructs";
 import { CfnOutput, Stage, StageProps, Tags } from "aws-cdk-lib";
 import { CdkpipelinesSuomifiStack } from "./cdkpipelines-suomifi-stack";
+import { BuildKeyCloudImageStack } from "./cdkpipelines-buildkeycloakimage-stack";
 
 /**
  * Deployable unit of web service app
@@ -13,6 +14,9 @@ export class CdkpipelinesSuomifiStage extends Stage {
 
     const cdkpipelinesSuomifiStack = new CdkpipelinesSuomifiStack(this, "SuomifiService", environment);
     Tags.of(cdkpipelinesSuomifiStack).add("project", "hassu");
+
+    const buildKeyCloudImageStack = new BuildKeyCloudImageStack(this, "BuildKeycloakImage", environment);
+    Tags.of(buildKeyCloudImageStack).add("project", "hassu");
 
     // Expose CdkpipelinesSuomifiStack's output one level higher
     this.dbAddress = cdkpipelinesSuomifiStack.dbAddress;

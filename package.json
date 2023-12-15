@@ -13,7 +13,6 @@
     "diff:dev": "ENVIRONMENT=dev cdk diff",
     "log:ecs": "aws logs tail --follow --since 1h /ecs/hassu-suomifi",
     "fetch-new-saml-certificates": "ts-node bin/fetch-new-saml-certificates.ts",
-    "deploy:image:dev": "ENVIRONMENT=dev cdk deploy BuildKeyCloudImageStack"
   },
   "devDependencies": {
     "@aws-cdk/assert": "2.68.0",

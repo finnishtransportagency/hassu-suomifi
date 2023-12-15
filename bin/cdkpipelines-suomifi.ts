@@ -2,7 +2,6 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CdkpipelinesSuomifiPipelineStack } from '../lib/cdkpipelines-suomifi-pipeline-stack';
-import { BuildKeyCloudImageStack } from '../lib/cdkpipelines-buildkeycloakimage-stack';
 
 const validEnvironments = ["dev", "prod"];
 const environment = process.env.ENVIRONMENT;
@@ -27,6 +26,3 @@ new CdkpipelinesSuomifiPipelineStack(app, 'CdkpipelinesSuomifiPipelineStack', {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 }, environment);
-
-const buildKeyCloudImageStack = new BuildKeyCloudImageStack(app, "BuildKeycloakImage", environment);
-cdk.Tags.of(buildKeyCloudImageStack).add("project", "hassu");
