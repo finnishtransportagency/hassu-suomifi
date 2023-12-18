@@ -349,13 +349,15 @@ export class CdkpipelinesSuomifiStack extends Stack {
                 "https://hassudev.testivaylapilvi.fi/",
                 "https://hassutest.testivaylapilvi.fi/",
                 "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
+                "https://www.vayliensuunnittelu.fi/keycloak/auth/realms/suomifi/protocol/openid-connect/logout",
               ]
-            : ["https://www.vayliensuunnittelu.fi/"],
+            : [
+                "https://www.vayliensuunnittelu.fi/",
+                "https://www.vayliensuunnittelu.fi/keycloak/auth/realms/suomifi/protocol/openid-connect/logout",
+              ],
       },
       supportedIdentityProviders: [
-        cognito.UserPoolClientIdentityProvider.custom(
-          openIDProviderProperties.ProviderName
-        ),
+        cognito.UserPoolClientIdentityProvider.custom(openIDProviderProperties.ProviderName),
       ],
       generateSecret: true,
     });
