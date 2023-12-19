@@ -384,7 +384,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
     });
 
     new StringParameter(this, `SuomifiHassu${environment}UserPoolClientId`, {
-      parameterName: `/${environment}/outputs/SuomifiUserPoolClientId`,
+      parameterName: `/outputs/SuomifiUserPoolClientId`,
       stringValue: userpoolclient.userPoolClientId,
       description: `Suomi.fi user pool client id for hassu${environment}`,
     });
