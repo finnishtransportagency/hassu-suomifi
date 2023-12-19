@@ -341,6 +341,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
                 "https://hassudev.testivaylapilvi.fi/",
                 "https://hassutest.testivaylapilvi.fi/",
                 "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
+                "http://localhost:3000/",
               ]
             : ["https://www.vayliensuunnittelu.fi/"],
         logoutUrls:
@@ -350,6 +351,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
                 "https://hassutest.testivaylapilvi.fi/",
                 "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
                 "https://www.vayliensuunnittelu.fi/keycloak/auth/realms/suomifi/protocol/openid-connect/logout",
+                "http://localhost:3000/",
               ]
             : [
                 "https://www.vayliensuunnittelu.fi/",
@@ -364,41 +366,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
     // specify the dependency between  userpool app client and userpool identity provider
     // to make sure that the identity provider already exists when the app client will be created
     userpoolclient.node.addDependency(userpoolidentityprovider);
-
-    if (environment === "dev") {
-      const localUserpoolclient = userpool.addClient(
-        "hassu-app-client-localhost",
-        {
-          userPoolClientName: "localhost-app-client",
-          oAuth: {
-            flows: {
-              authorizationCodeGrant: true,
-            },
-            scopes: [
-              cognito.OAuthScope.OPENID,
-              cognito.OAuthScope.EMAIL,
-              cognito.OAuthScope.PROFILE,
-            ],
-            callbackUrls: ["http://localhost:3000/"],
-            logoutUrls: ["http://localhost:3000/"],
-          },
-          supportedIdentityProviders: [
-            cognito.UserPoolClientIdentityProvider.custom(
-              openIDProviderProperties.ProviderName
-            ),
-          ],
-          generateSecret: true,
-        }
-      );
-      // specify the dependency between  userpool app client and userpool identity provider
-      // to make sure that the identity provider already exists when the app client will be created
-      localUserpoolclient.node.addDependency(userpoolidentityprovider);
-      new StringParameter(this, "SuomifiLocalhostUserPoolClientId", {
-        parameterName: `/${environment}/outputs/SuomifiLocalhostUserPoolClientId`,
-        stringValue: localUserpoolclient.userPoolClientId,
-        description: "Suomi.fi user pool client id for localhost",
-      });
-    }
 
     const userPoolDomain = userpool.addDomain("hassu-cognito-domain", {
       cognitoDomain: {
