@@ -389,7 +389,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       description: `Suomi.fi user pool client id for hassu${environment}`,
     });
     new StringParameter(this, "SuomifiCognitoDomain", {
-      parameterName: `/${environment}/outputs/SuomifiCognitoDomain`,
+      parameterName: `/outputs/SuomifiCognitoDomain`,
       stringValue: userPoolDomain.baseUrl(),
       description: "Suomi.fi cognito domain",
     });
