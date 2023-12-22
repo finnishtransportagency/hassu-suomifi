@@ -5,7 +5,7 @@ import * as CdkpipelinesSuomifi from '../lib/cdkpipelines-suomifi-stack';
 test('Empty Stack', () => {
     const app = new cdk.App();
     // WHEN
-    const stack = new CdkpipelinesSuomifi.CdkpipelinesSuomifiStack(app, 'MyTestStack');
+    const stack = new CdkpipelinesSuomifi.CdkpipelinesSuomifiStack(app, 'MyTestStack', "dev");
     // THEN
     expectCDK(stack).to(matchTemplate({
       "Resources": {}
