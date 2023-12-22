@@ -338,23 +338,21 @@ export class CdkpipelinesSuomifiStack extends Stack {
         callbackUrls:
           environment === "dev"
             ? [
-                "https://hassudev.testivaylapilvi.fi/",
-                "https://hassutest.testivaylapilvi.fi/",
-                "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
-                "http://localhost:3000/",
+                "https://hassudev.testivaylapilvi.fi/api/token",
+                "https://hassutest.testivaylapilvi.fi/api/token",
+                "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/api/token",
+                "http://localhost:3000/api/token",
               ]
-            : ["https://www.vayliensuunnittelu.fi/"],
+            : ["https://www.vayliensuunnittelu.fi/api/token"],
         logoutUrls:
           environment === "dev"
             ? [
-                "https://hassudev.testivaylapilvi.fi/",
-                "https://hassutest.testivaylapilvi.fi/",
-                "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/",
+                "https://hassudev.testivaylapilvi.fi/api/slo",
+                "https://hassutest.testivaylapilvi.fi/api/slo",
+                "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/api/slo",
                 "http://localhost:3000/api/slo",
-                "http://localhost:3000/",
               ]
             : [
-                "https://www.vayliensuunnittelu.fi/", 
                 "https://www.vayliensuunnittelu.fi/api/slo"
               ],
       },
