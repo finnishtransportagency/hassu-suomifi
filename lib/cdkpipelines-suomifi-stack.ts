@@ -307,6 +307,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       "custom:hetu": "hetu",
       family_name: "family_name",
       given_name: "given_name",
+      name: "name",
     };
 
     const openIDProviderProperties: idp.OpenIDProviderProperties = {
