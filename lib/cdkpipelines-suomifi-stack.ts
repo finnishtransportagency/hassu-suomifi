@@ -298,7 +298,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     const AttributeMapping = {
       email: "email",
-      sub: "username",
+      username: "sub",
       "custom:lahiosoite": "lahiosoite",
       "custom:postinumero": "postinumero",
       "custom:postitoimipaikka": "postitoimipaikka",
