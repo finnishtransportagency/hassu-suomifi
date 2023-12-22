@@ -5,7 +5,7 @@ import { ComputeType, LocalCacheMode } from "aws-cdk-lib/aws-codebuild";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 
 export class BuildKeyCloudImageStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, environment: string, props?: StackProps) {
     super(scope, id, props);
 
     // CodeBuild project that builds the docker image
@@ -44,7 +44,7 @@ export class BuildKeyCloudImageStack extends Stack {
               "docker tag hassu-keycloak-repo:$GIT_HASH $REPO_URI",
               "docker push $REPO_URI",
               // Set GIT_HASH as ssm parameter
-              "aws ssm put-parameter --name /dev/keycloak/imagehash --value $GIT_HASH --type String --overwrite",
+              `aws ssm put-parameter --name /${environment}/keycloak/imagehash --value $GIT_HASH --type String --overwrite`,
             ],
           },
         },
