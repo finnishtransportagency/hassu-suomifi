@@ -34,7 +34,9 @@ export class CdkpipelinesSuomifiPipelineStack extends Stack {
     // create options where prod env will have manual approval pre step
     const manualApprovalOptions =
       environment === "dev"
-        ? {}
+        ? {
+            pre: [new ManualApprovalStep("DeployToDev")],
+          }
         : {
             pre: [new ManualApprovalStep("DeployToProd")],
           };
