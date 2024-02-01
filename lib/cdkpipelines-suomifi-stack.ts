@@ -73,6 +73,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         },
         writer: rds.ClusterInstance.serverlessV2("writer"),
         snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-2024`,
+        snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
         serverlessV2MaxCapacity: 8,
         serverlessV2MinCapacity: 2,
       });
