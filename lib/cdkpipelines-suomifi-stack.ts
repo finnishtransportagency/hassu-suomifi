@@ -21,19 +21,11 @@ export class CdkpipelinesSuomifiStack extends Stack {
    */
   public readonly dbAddress: CfnOutput;
 
-  constructor(
-    scope: Construct,
-    id: string,
-    environment: string,
-    props?: StackProps
-  ) {
+  constructor(scope: Construct, id: string, environment: string, props?: StackProps) {
     super(scope, id, props);
 
     const vpc = ec2.Vpc.fromLookup(this, "Vpc", {
-      vpcId:
-        environment === "dev"
-          ? "vpc-0689ac0f1efc74993"
-          : "vpc-0c13923fe7e0f1834",
+      vpcId: environment === "dev" ? "vpc-0689ac0f1efc74993" : "vpc-0c13923fe7e0f1834",
     });
 
     // 2. ALB
@@ -52,38 +44,39 @@ export class CdkpipelinesSuomifiStack extends Stack {
     });
 
     // 3. Aurora postgresql -> Aurora Serverless
-    const rdsinstance = new rds.ServerlessClusterFromSnapshot(this, "Cluster", {
-      engine: rds.DatabaseClusterEngine.auroraPostgres({
-        version: rds.AuroraPostgresEngineVersion.VER_13_12,
-      }),
-      vpc,
-      vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-      },
-      snapshotIdentifier:
-        `arn:aws:rds:eu-west-1:${environment === "dev" ? "283563576583" : "385766954911"}:cluster-snapshot:keycloak-db-backup`,
-      scaling: {
-        autoPause: Duration.minutes(30),
-        minCapacity: rds.AuroraCapacityUnit.ACU_2,
-        maxCapacity: rds.AuroraCapacityUnit.ACU_8,
-      },
-    });
-
-    /*
-    const serverlessAuroraCluster = new DatabaseCluster(this, 'serverlessAuroraCluster', {
-      engine: DatabaseClusterEngine.auroraPostgres({
-        version: AuroraPostgresEngineVersion.VER_13_12,
-      }),
-      vpc,
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
-      credentials: Credentials.fromGeneratedSecret(`${dbname}admin`),
-      defaultDatabaseName: dbname + 'Cluster',
-      // no readers as default in dev use
-      writer: ClusterInstance.serverlessV2('writer'),
-      serverlessV2MinCapacity: 0.5,
-      serverlessV2MaxCapacity: 2,
-    });
-    */
+    let rdsinstance;
+    // not ready to change dev instances yet
+    if (environment === "dev") {
+      rdsinstance = new rds.ServerlessClusterFromSnapshot(this, "Cluster", {
+        engine: rds.DatabaseClusterEngine.auroraPostgres({
+          version: rds.AuroraPostgresEngineVersion.VER_13_12,
+        }),
+        vpc,
+        vpcSubnets: {
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        },
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup`,
+        scaling: {
+          autoPause: Duration.minutes(30),
+          minCapacity: rds.AuroraCapacityUnit.ACU_2,
+          maxCapacity: rds.AuroraCapacityUnit.ACU_8,
+        },
+      });
+    } else {
+      rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
+        engine: rds.DatabaseClusterEngine.auroraPostgres({
+          version: rds.AuroraPostgresEngineVersion.VER_13_12,
+        }),
+        vpc,
+        vpcSubnets: {
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        },
+        writer: rds.ClusterInstance.serverlessV2("writer"),
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-2024`,
+        serverlessV2MaxCapacity: 8,
+        serverlessV2MinCapacity: 2,
+      });
+    }
 
     new ssm.StringParameter(this, "DbAddressParameter", {
       parameterName: `/${environment}/keycloak/dbAddress`,
@@ -95,14 +88,10 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     // 5. CloudMap
 
-    const cloudMapNamespace = new servicediscovery.PrivateDnsNamespace(
-      this,
-      "Namespace",
-      {
-        name: `${environment}suomifi.local`,
-        vpc,
-      }
-    );
+    const cloudMapNamespace = new servicediscovery.PrivateDnsNamespace(this, "Namespace", {
+      name: `${environment}suomifi.local`,
+      vpc,
+    });
 
     const suomifiservice = cloudMapNamespace.createService("Service", {
       dnsRecordType: servicediscovery.DnsRecordType.A_AAAA,
@@ -114,82 +103,54 @@ export class CdkpipelinesSuomifiStack extends Stack {
       vpc: vpc,
     });
 
-    const taskDefinition = new ecs.FargateTaskDefinition(
+    const taskDefinition = new ecs.FargateTaskDefinition(this, "TaskDefinition", {
+      memoryLimitMiB: 1024,
+      cpu: 512,
+    });
+
+    const keycloakUserParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, "KeycloakUserParam", {
+      parameterName: `/${environment}/keycloak/keycloakUser`,
+      version: 1,
+    });
+
+    const keycloakPasswordParam = ssm.StringParameter.fromSecureStringParameterAttributes(
       this,
-      "TaskDefinition",
+      "KeycloakPasswordParam",
       {
-        memoryLimitMiB: 1024,
-        cpu: 512,
+        parameterName: `/${environment}/keycloak/keycloakPassword`,
+        version: 1,
       }
     );
 
-    const keycloakUserParam =
-      ssm.StringParameter.fromSecureStringParameterAttributes(
-        this,
-        "KeycloakUserParam",
-        {
-          parameterName: `/${environment}/keycloak/keycloakUser`,
-          version: 1,
-        }
-      );
+    const keycloakDbUserParam = ssm.StringParameter.fromSecureStringParameterAttributes(this, "KeycloakDbUserParam", {
+      parameterName: `/${environment}/keycloak/dbUser`,
+      version: 1,
+    });
 
-    const keycloakPasswordParam =
-      ssm.StringParameter.fromSecureStringParameterAttributes(
-        this,
-        "KeycloakPasswordParam",
-        {
-          parameterName: `/${environment}/keycloak/keycloakPassword`,
-          version: 1,
-        }
-      );
+    const keycloakDbPasswordParam = ssm.StringParameter.fromSecureStringParameterAttributes(
+      this,
+      "KeycloakDbPasswordParam",
+      {
+        parameterName: `/${environment}/keycloak/dbPassword`,
+        version: 1,
+      }
+    );
 
-    const keycloakDbUserParam =
-      ssm.StringParameter.fromSecureStringParameterAttributes(
-        this,
-        "KeycloakDbUserParam",
-        {
-          parameterName: `/${environment}/keycloak/dbUser`,
-          version: 1,
-        }
-      );
-
-    const keycloakDbPasswordParam =
-      ssm.StringParameter.fromSecureStringParameterAttributes(
-        this,
-        "KeycloakDbPasswordParam",
-        {
-          parameterName: `/${environment}/keycloak/dbPassword`,
-          version: 1,
-        }
-      );
-
-    const keycloakDbAddressParam =
-      ssm.StringParameter.fromStringParameterAttributes(
-        this,
-        "KeycloakDbAddressParam",
-        {
-          parameterName: `/${environment}/keycloak/dbAddress`,
-          version: 1,
-        }
-      );
+    const keycloakDbAddressParam = ssm.StringParameter.fromStringParameterAttributes(this, "KeycloakDbAddressParam", {
+      parameterName: `/${environment}/keycloak/dbAddress`,
+      version: 1,
+    });
 
     const logGroup = new logs.LogGroup(this, "LogGroup", {
       logGroupName: "/ecs/hassu-suomifi",
       retention: logs.RetentionDays.TWO_WEEKS,
     });
 
-    const repository = Repository.fromRepositoryName(
-      this,
-      "KeycloakRepo",
-      "hassu-keycloak-repo"
-    );
+    const repository = Repository.fromRepositoryName(this, "KeycloakRepo", "hassu-keycloak-repo");
     taskDefinition.addContainer("KeycloakContainer", {
       image: ecs.ContainerImage.fromEcrRepository(
         repository,
-        StringParameter.valueForStringParameter(
-          this,
-          `/${environment}/keycloak/imagehash`
-        )
+        StringParameter.valueForStringParameter(this, `/${environment}/keycloak/imagehash`)
       ),
       environment: {
         ENV: `${environment}`,
@@ -222,11 +183,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       vpc,
       allowAllOutbound: true,
     });
-    ecsSecurityGroup.connections.allowTo(
-      rdsinstance,
-      ec2.Port.tcp(5432),
-      "RDS connection"
-    );
+    ecsSecurityGroup.connections.allowTo(rdsinstance, ec2.Port.tcp(5432), "RDS connection");
 
     const service = new ecs.FargateService(this, "Service", {
       cluster,
@@ -278,38 +235,17 @@ export class CdkpipelinesSuomifiStack extends Stack {
         this,
         `/${environment}/keycloak/conf/authorizeScopes`
       ),
-      client_id: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/clientId`
-      ),
-      client_secret: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/clientSecret`
-      ),
+      client_id: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/clientId`),
+      client_secret: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/clientSecret`),
       attributes_request_method: ssm.StringParameter.valueForStringParameter(
         this,
         `/${environment}/keycloak/conf/method`
       ),
-      oidc_issuer: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/oidcIssuer`
-      ),
-      authorize_url: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/authorizeUrl`
-      ),
-      attributes_url: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/attributesUrl`
-      ),
-      token_url: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/tokenUrl`
-      ),
-      jwks_uri: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/jwksUri`
-      ),
+      oidc_issuer: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/oidcIssuer`),
+      authorize_url: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/authorizeUrl`),
+      attributes_url: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/attributesUrl`),
+      token_url: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/tokenUrl`),
+      jwks_uri: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/jwksUri`),
     };
 
     const AttributeMapping = {
@@ -334,11 +270,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       ProviderDetails,
     };
 
-    const userpoolidentityprovider = new idp.CognitoOpenIDProvider(
-      this,
-      "UserPoolIDP",
-      openIDProviderProperties
-    );
+    const userpoolidentityprovider = new idp.CognitoOpenIDProvider(this, "UserPoolIDP", openIDProviderProperties);
 
     const userpoolclient = userpool.addClient("hassu-app-client", {
       userPoolClientName: `hassu${environment}-app-client`,
@@ -346,11 +278,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         flows: {
           authorizationCodeGrant: true,
         },
-        scopes: [
-          cognito.OAuthScope.OPENID,
-          cognito.OAuthScope.EMAIL,
-          cognito.OAuthScope.PROFILE,
-        ],
+        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
         callbackUrls:
           environment === "dev"
             ? [
@@ -368,9 +296,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
                 "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/api/slo",
                 "http://localhost:3000/api/slo",
               ]
-            : [
-                "https://www.vayliensuunnittelu.fi/api/slo"
-              ],
+            : ["https://www.vayliensuunnittelu.fi/api/slo"],
       },
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom(openIDProviderProperties.ProviderName),
@@ -383,10 +309,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     const userPoolDomain = userpool.addDomain("hassu-cognito-domain", {
       cognitoDomain: {
-        domainPrefix:
-          environment === "dev"
-            ? "dev-hassu-tunnistautuminen"
-            : "vls-tunnistautuminen",
+        domainPrefix: environment === "dev" ? "dev-hassu-tunnistautuminen" : "vls-tunnistautuminen",
       },
     });
 
