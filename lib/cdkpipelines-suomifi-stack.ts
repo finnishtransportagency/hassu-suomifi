@@ -69,6 +69,22 @@ export class CdkpipelinesSuomifiStack extends Stack {
       },
     });
 
+    /*
+    const serverlessAuroraCluster = new DatabaseCluster(this, 'serverlessAuroraCluster', {
+      engine: DatabaseClusterEngine.auroraPostgres({
+        version: AuroraPostgresEngineVersion.VER_13_12,
+      }),
+      vpc,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      credentials: Credentials.fromGeneratedSecret(`${dbname}admin`),
+      defaultDatabaseName: dbname + 'Cluster',
+      // no readers as default in dev use
+      writer: ClusterInstance.serverlessV2('writer'),
+      serverlessV2MinCapacity: 0.5,
+      serverlessV2MaxCapacity: 2,
+    });
+    */
+
     new ssm.StringParameter(this, "DbAddressParameter", {
       parameterName: `/${environment}/keycloak/dbAddress`,
       description: "Description for your parameter",
