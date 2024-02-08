@@ -225,9 +225,8 @@ export class CdkpipelinesSuomifiStack extends Stack {
         postitoimipaikka: new cognito.StringAttribute({ mutable: true }),
         postinumero: new cognito.StringAttribute({ mutable: true }),
         ulkomainenlahiosoite: new cognito.StringAttribute({ mutable: true }),
-        ulkomainenkunta: new cognito.StringAttribute({
-          mutable: true,
-        }),
+        ulkomainenkunta: new cognito.StringAttribute({ mutable: true }),
+        maakoodi: new cognito.StringAttribute({ mutable: true }),
       },
     });
 
@@ -258,6 +257,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       "custom:ulkomainenlahiosoite": "ulkomainenlahiosoite",
       "custom:ulkomainenkunta": "ulkomainenkunta",
       "custom:hetu": "hetu",
+      "custom:maakoodi": "maakoodi",
       family_name: "family_name",
       given_name: "given_name",
     };
