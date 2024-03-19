@@ -299,6 +299,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
               ]
             : ["https://www.vayliensuunnittelu.fi/api/slo"],
       },
+      accessTokenValidity: Duration.minutes(5),
       supportedIdentityProviders: [
         cognito.UserPoolClientIdentityProvider.custom(openIDProviderProperties.ProviderName),
       ],
