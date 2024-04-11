@@ -9,8 +9,6 @@ import * as rds from "aws-cdk-lib/aws-rds";
 import { Construct } from "constructs";
 import { CfnOutput, Duration, Stack, StackProps } from "aws-cdk-lib";
 import * as servicediscovery from "aws-cdk-lib/aws-servicediscovery";
-import * as cognito from "aws-cdk-lib/aws-cognito";
-import * as idp from "./UserpoolProviderOpenID";
 
 /**
  * A stack for our simple Lambda-powered web service
@@ -216,121 +214,11 @@ export class CdkpipelinesSuomifiStack extends Stack {
       },
     });
 
-    // 7. Cognito with OpenID Connect
-    const userpool = new cognito.UserPool(this, "vls-userpool", {
-      userPoolName: "hassu-userpool",
-      customAttributes: {
-        hetu: new cognito.StringAttribute({ mutable: true }),
-        lahiosoite: new cognito.StringAttribute({ mutable: true }),
-        postitoimipaikka: new cognito.StringAttribute({ mutable: true }),
-        postinumero: new cognito.StringAttribute({ mutable: true }),
-        ulkomainenlahiosoite: new cognito.StringAttribute({ mutable: true }),
-        ulkomainenkunta: new cognito.StringAttribute({ mutable: true }),
-        maakoodi: new cognito.StringAttribute({ mutable: true }),
-      },
-    });
-
-    const ProviderDetails: idp.OpenIDProviderDetails = {
-      authorize_scopes: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/authorizeScopes`
-      ),
-      client_id: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/clientId`),
-      client_secret: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/clientSecret`),
-      attributes_request_method: ssm.StringParameter.valueForStringParameter(
-        this,
-        `/${environment}/keycloak/conf/method`
-      ),
-      oidc_issuer: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/oidcIssuer`),
-      authorize_url: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/authorizeUrl`),
-      attributes_url: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/attributesUrl`),
-      token_url: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/tokenUrl`),
-      jwks_uri: ssm.StringParameter.valueForStringParameter(this, `/${environment}/keycloak/conf/jwksUri`),
-    };
-
-    const AttributeMapping = {
-      email: "email",
-      username: "sub",
-      "custom:lahiosoite": "lahiosoite",
-      "custom:postinumero": "postinumero",
-      "custom:postitoimipaikka": "postitoimipaikka",
-      "custom:ulkomainenlahiosoite": "ulkomainenlahiosoite",
-      "custom:ulkomainenkunta": "ulkomainenkunta",
-      "custom:hetu": "hetu",
-      "custom:maakoodi": "maakoodi",
-      family_name: "family_name",
-      given_name: "given_name",
-    };
-
-    const openIDProviderProperties: idp.OpenIDProviderProperties = {
-      UserPoolId: userpool.userPoolId,
-      ProviderName: "Suomi.fi",
-      ProviderType: "OIDC",
-      IdpIdentifiers: [],
-      AttributeMapping,
-      ProviderDetails,
-    };
-
-    const userpoolidentityprovider = new idp.CognitoOpenIDProvider(this, "UserPoolIDP", openIDProviderProperties);
-
-    const userpoolclient = userpool.addClient("hassu-app-client", {
-      userPoolClientName: `hassu${environment}-app-client`,
-      oAuth: {
-        flows: {
-          authorizationCodeGrant: true,
-        },
-        scopes: [cognito.OAuthScope.OPENID, cognito.OAuthScope.EMAIL, cognito.OAuthScope.PROFILE],
-        callbackUrls:
-          environment === "dev"
-            ? [
-                "https://hassudev.testivaylapilvi.fi/api/token",
-                "https://hassutest.testivaylapilvi.fi/api/token",
-                "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/api/token",
-                "http://localhost:3000/api/token",
-              ]
-            : ["https://www.vayliensuunnittelu.fi/api/token"],
-        logoutUrls:
-          environment === "dev"
-            ? [
-                "https://hassudev.testivaylapilvi.fi/api/slo",
-                "https://hassutest.testivaylapilvi.fi/api/slo",
-                "https://vayliensuunnittelukoulutus.testivaylapilvi.fi/api/slo",
-                "http://localhost:3000/api/slo",
-              ]
-            : ["https://www.vayliensuunnittelu.fi/api/slo"],
-      },
-      accessTokenValidity: Duration.minutes(5),
-      supportedIdentityProviders: [
-        cognito.UserPoolClientIdentityProvider.custom(openIDProviderProperties.ProviderName),
-      ],
-      generateSecret: true,
-    });
-    // specify the dependency between  userpool app client and userpool identity provider
-    // to make sure that the identity provider already exists when the app client will be created
-    userpoolclient.node.addDependency(userpoolidentityprovider);
-
-    const userPoolDomain = userpool.addDomain("hassu-cognito-domain", {
-      cognitoDomain: {
-        domainPrefix: environment === "dev" ? "dev-hassu-tunnistautuminen" : "vls-tunnistautuminen",
-      },
-    });
-
     // Outputs
     this.dbAddress = new CfnOutput(this, "DatabaseURL", {
       value: rdsinstance.clusterEndpoint.hostname,
       description: "Host name of the postgres instance for keycloak",
       exportName: "dbAddress",
-    });
-
-    new StringParameter(this, `SuomifiHassu${environment}UserPoolClientId`, {
-      parameterName: `/${environment}/outputs/SuomifiUserPoolClientId`,
-      stringValue: userpoolclient.userPoolClientId,
-      description: `Suomi.fi user pool client id for hassu${environment}`,
-    });
-    new StringParameter(this, "SuomifiCognitoDomain", {
-      parameterName: `/${environment}/outputs/SuomifiCognitoDomain`,
-      stringValue: userPoolDomain.baseUrl(),
-      description: "Suomi.fi cognito domain",
     });
   }
 }
