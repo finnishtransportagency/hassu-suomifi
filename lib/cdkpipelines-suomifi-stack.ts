@@ -39,6 +39,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       vpcSubnets: { onePerAz: true },
       http2Enabled: true,
       securityGroup,
+      deletionProtection: true,
     });
 
     // 3. Aurora postgresql -> Aurora Serverless
@@ -199,6 +200,10 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     const listener = alb.addListener("Listener", { port: 80 });
     listener.addTargets("ECS", {
+      priority: 10, // Must be unique among all actions and targets
+      conditions: [
+        loadbalance.ListenerCondition.pathPatterns(["/keycloak/*"]),
+      ],
       port: 80,
       targets: [
         service.loadBalancerTarget({
