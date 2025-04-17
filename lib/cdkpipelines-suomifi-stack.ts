@@ -219,6 +219,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
       },
     });
 
+    // Default action: Return 404 for unmatched requests
+    listener.addAction("DefaultAction", {
+      action: loadbalance.ListenerAction.fixedResponse(404, {
+        contentType: "application/json",
+        messageBody: JSON.stringify({ error: "Not Found" }),
+      }),
+    });
+
     // Outputs
     this.dbAddress = new CfnOutput(this, "DatabaseURL", {
       value: rdsinstance.clusterEndpoint.hostname,
