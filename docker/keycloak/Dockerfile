@@ -1,17 +1,11 @@
-FROM jboss/keycloak
+FROM quay.io/keycloak/keycloak:26.4.5
 
-COPY ./lib/postgresql-42.2.24.jar /opt/jboss/keycloak/modules/system/layers/keycloak/org/postgresql/main/
-COPY ./conf/jboss/postgresql/module.xml /opt/jboss/keycloak/modules/system/layers/keycloak/org/postgresql/main/
-RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' /opt/jboss/keycloak/standalone/configuration/standalone.xml
-RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' /opt/jboss/keycloak/standalone/configuration/standalone-ha.xml
-RUN sed -i -e 's/\/auth\//\/keycloak\/auth\//' /opt/jboss/keycloak/welcome-content/index.html
+COPY ./conf/keycloak/suomifi-realm-export.json /opt/keycloak/data/import/
 
-COPY ./conf/keycloak/suomifi-realm-export.json /opt/jboss/keycloak/standalone/tmp/
+ENV KC_HEALTH_ENABLED=true
 
-USER root
 ENV TZ=Europe/Helsinki
-RUN microdnf update
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && microdnf clean all
 
-# uncomment for debugging purposes and to keep container alive
-# ENTRYPOINT [ "tail", "-f", "/dev/null" ]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+# Override in local env with e.g. CMD ["start-dev"]
+CMD ["start"]
