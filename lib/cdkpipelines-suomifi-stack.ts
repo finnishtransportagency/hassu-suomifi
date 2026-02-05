@@ -48,13 +48,13 @@ export class CdkpipelinesSuomifiStack extends Stack {
     if (environment === "dev") {
       rdsinstance = new rds.ServerlessClusterFromSnapshot(this, "Cluster", {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_13_12,
+          version: rds.AuroraPostgresEngineVersion.VER_14_20,
         }),
         vpc,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup`,
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
         scaling: {
           autoPause: Duration.minutes(30),
           minCapacity: rds.AuroraCapacityUnit.ACU_2,
