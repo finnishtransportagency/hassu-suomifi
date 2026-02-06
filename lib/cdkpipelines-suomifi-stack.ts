@@ -64,14 +64,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
     } else {
       rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_13_12,
+          version: rds.AuroraPostgresEngineVersion.VER_14_20,
         }),
         vpc,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         writer: rds.ClusterInstance.serverlessV2("writer"),
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-2024`,
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
         snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
         serverlessV2MaxCapacity: 8,
         serverlessV2MinCapacity: 1,
