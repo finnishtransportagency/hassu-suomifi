@@ -44,7 +44,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     // 3. Aurora postgresql -> Aurora Serverless
     let rdsinstance;
-    // not ready to change dev instances yet
+    // keep dev instance smaller and use auto pause feature
     if (environment === "dev") {
       rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
