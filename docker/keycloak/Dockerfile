@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:26.5.2
+FROM quay.io/keycloak/keycloak:26.5.3
 
 COPY ./conf/keycloak/suomifi-realm-export.json /opt/keycloak/data/import/
 
