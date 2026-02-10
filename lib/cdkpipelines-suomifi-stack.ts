@@ -44,34 +44,34 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     // 3. Aurora postgresql -> Aurora Serverless
     let rdsinstance;
-    // not ready to change dev instances yet
+    // keep dev instance smaller and use auto pause feature
     if (environment === "dev") {
-      rdsinstance = new rds.ServerlessClusterFromSnapshot(this, "Cluster", {
-        engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_13_12,
-        }),
-        vpc,
-        vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-        },
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup`,
-        scaling: {
-          autoPause: Duration.minutes(30),
-          minCapacity: rds.AuroraCapacityUnit.ACU_2,
-          maxCapacity: rds.AuroraCapacityUnit.ACU_8,
-        },
-      });
-    } else {
       rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_13_12,
+          version: rds.AuroraPostgresEngineVersion.VER_14_20,
         }),
         vpc,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         writer: rds.ClusterInstance.serverlessV2("writer"),
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-2024`,
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
+        snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
+        serverlessV2AutoPauseDuration: Duration.minutes(30),
+        serverlessV2MinCapacity: 0,
+        serverlessV2MaxCapacity: 4
+      });
+    } else {
+      rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
+        engine: rds.DatabaseClusterEngine.auroraPostgres({
+          version: rds.AuroraPostgresEngineVersion.VER_14_20,
+        }),
+        vpc,
+        vpcSubnets: {
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        },
+        writer: rds.ClusterInstance.serverlessV2("writer"),
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
         snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
         serverlessV2MaxCapacity: 8,
         serverlessV2MinCapacity: 1,
