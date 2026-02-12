@@ -163,9 +163,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
         KC_HTTP_ENABLED: "true",
         KC_HTTP_MANAGEMENT_RELATIVE_PATH: "/",
         KC_HTTP_MANAGEMENT_SCHEME: "http",
-        //JGROUPS_DISCOVERY_PROTOCOL: "dns.DNS_PING",
-        //JGROUPS_DISCOVERY_PROPERTIES: `dns_query=${environment}suomifi.local`,
-        //KEYCLOAK_IMPORT: '/opt/jboss/keycloak/standalone/tmp/suomifi-realm-export.json'
       },
       secrets: {
         KC_BOOTSTRAP_ADMIN_USERNAME: ecs.Secret.fromSsmParameter(keycloakUserParam),
@@ -185,7 +182,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
       vpc,
       allowAllOutbound: true,
     });
+
     ecsSecurityGroup.connections.allowTo(rdsinstance, ec2.Port.tcp(5432), "RDS connection");
+
+    ecsSecurityGroup.addIngressRule(
+      securityGroup,
+      ec2.Port.tcp(9000),
+      "Allow ALB health check on Keycloak management port"
+    );
 
     const service = new ecs.FargateService(this, "Service", {
       cluster,
