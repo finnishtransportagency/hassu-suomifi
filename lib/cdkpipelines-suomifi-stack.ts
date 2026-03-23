@@ -44,34 +44,34 @@ export class CdkpipelinesSuomifiStack extends Stack {
 
     // 3. Aurora postgresql -> Aurora Serverless
     let rdsinstance;
-    // not ready to change dev instances yet
+    // keep dev instance smaller and use auto pause feature
     if (environment === "dev") {
-      rdsinstance = new rds.ServerlessClusterFromSnapshot(this, "Cluster", {
-        engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_13_12,
-        }),
-        vpc,
-        vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-        },
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup`,
-        scaling: {
-          autoPause: Duration.minutes(30),
-          minCapacity: rds.AuroraCapacityUnit.ACU_2,
-          maxCapacity: rds.AuroraCapacityUnit.ACU_8,
-        },
-      });
-    } else {
       rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_13_12,
+          version: rds.AuroraPostgresEngineVersion.VER_14_20,
         }),
         vpc,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         writer: rds.ClusterInstance.serverlessV2("writer"),
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-2024`,
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
+        snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
+        serverlessV2AutoPauseDuration: Duration.minutes(30),
+        serverlessV2MinCapacity: 0,
+        serverlessV2MaxCapacity: 4
+      });
+    } else {
+      rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
+        engine: rds.DatabaseClusterEngine.auroraPostgres({
+          version: rds.AuroraPostgresEngineVersion.VER_14_20,
+        }),
+        vpc,
+        vpcSubnets: {
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+        },
+        writer: rds.ClusterInstance.serverlessV2("writer"),
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
         snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
         serverlessV2MaxCapacity: 8,
         serverlessV2MinCapacity: 1,
@@ -154,25 +154,24 @@ export class CdkpipelinesSuomifiStack extends Stack {
       ),
       environment: {
         ENV: `${environment}`,
-        KEYCLOAK_FRONTEND_URL:
-          environment === "dev"
-            ? "https://hassudev.testivaylapilvi.fi/keycloak/auth"
-            : "https://www.vayliensuunnittelu.fi/keycloak/auth",
-        DB_VENDOR: "postgres",
-        DB_PORT: "5432",
-        DB_DATABASE: "keycloak",
-        JGROUPS_DISCOVERY_PROTOCOL: "dns.DNS_PING",
-        JGROUPS_DISCOVERY_PROPERTIES: `dns_query=${environment}suomifi.local`,
-        //KEYCLOAK_IMPORT: '/opt/jboss/keycloak/standalone/tmp/suomifi-realm-export.json'
+        KC_HOSTNAME_STRICT: "false",
+        KC_HTTP_RELATIVE_PATH: "/keycloak/auth",
+        KC_DB: "postgres",
+        KC_DB_URL_PORT: "5432",
+        KC_DB_URL_DATABASE: "keycloak",
+        KC_PROXY_HEADERS: "forwarded",
+        KC_HTTP_ENABLED: "true",
+        KC_HTTP_MANAGEMENT_RELATIVE_PATH: "/",
+        KC_HTTP_MANAGEMENT_SCHEME: "http",
       },
       secrets: {
-        KEYCLOAK_USER: ecs.Secret.fromSsmParameter(keycloakUserParam),
-        KEYCLOAK_PASSWORD: ecs.Secret.fromSsmParameter(keycloakPasswordParam),
-        DB_ADDR: ecs.Secret.fromSsmParameter(keycloakDbAddressParam),
-        DB_USER: ecs.Secret.fromSsmParameter(keycloakDbUserParam),
-        DB_PASSWORD: ecs.Secret.fromSsmParameter(keycloakDbPasswordParam),
+        KC_BOOTSTRAP_ADMIN_USERNAME: ecs.Secret.fromSsmParameter(keycloakUserParam),
+        KC_BOOTSTRAP_ADMIN_PASSWORD: ecs.Secret.fromSsmParameter(keycloakPasswordParam),
+        KC_DB_URL_HOST: ecs.Secret.fromSsmParameter(keycloakDbAddressParam),
+        KC_DB_USERNAME: ecs.Secret.fromSsmParameter(keycloakDbUserParam),
+        KC_DB_PASSWORD: ecs.Secret.fromSsmParameter(keycloakDbPasswordParam),
       },
-      portMappings: [{ containerPort: 8080 }],
+      portMappings: [{ containerPort: 8080 }, {containerPort: 9000}],
       logging: ecs.LogDrivers.awsLogs({
         logGroup: logGroup,
         streamPrefix: "KeycloakContainer",
@@ -183,7 +182,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
       vpc,
       allowAllOutbound: true,
     });
+
     ecsSecurityGroup.connections.allowTo(rdsinstance, ec2.Port.tcp(5432), "RDS connection");
+
+    ecsSecurityGroup.addIngressRule(
+      securityGroup,
+      ec2.Port.tcp(9000),
+      "Allow ALB health check on Keycloak management port"
+    );
 
     const service = new ecs.FargateService(this, "Service", {
       cluster,
@@ -213,9 +219,13 @@ export class CdkpipelinesSuomifiStack extends Stack {
       ],
       healthCheck: {
         enabled: true,
-        port: "8080",
-        path: "/keycloak/auth/",
+        port: "9000", // Health endpoints exposed on 9000 mgmt port by default 
+        path: "/health/ready",
         protocol: loadbalance.Protocol.HTTP,
+        timeout: Duration.seconds(30),
+        unhealthyThresholdCount: 3,
+        healthyThresholdCount: 3,
+        interval: Duration.seconds(60),
       },
     });
 
