@@ -5,6 +5,7 @@
     "typeRoots": [
       "node_modules/@types"
     ],
+    "types": ["jest", "node"],
     "sourceMap": true,
     "inlineSources": true,
     "sourceRoot": "/",
@@ -29,6 +30,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true
