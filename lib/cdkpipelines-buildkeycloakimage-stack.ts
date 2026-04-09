@@ -1,5 +1,6 @@
 import { Construct } from "constructs";
 import { Stack, StackProps } from "aws-cdk-lib";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
 import * as codebuild from "aws-cdk-lib/aws-codebuild";
 import { ComputeType, LocalCacheMode } from "aws-cdk-lib/aws-codebuild";
 import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
@@ -55,6 +56,13 @@ export class BuildKeyCloudImageStack extends Stack {
         effect: Effect.ALLOW,
         actions: ["ecr:*", "ssm:*"],
         resources: ["*"],
+      })
+    );
+    buildProject.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ["codeconnections:GetConnectionToken", "codeconnections:GetConnection"],
+        resources: [StringParameter.valueForStringParameter(this, "/outputs/GitHubConnectionArn")],
       })
     );
   }
