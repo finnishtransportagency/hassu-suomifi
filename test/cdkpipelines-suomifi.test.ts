@@ -1,13 +1,12 @@
-import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
 import * as cdk from 'aws-cdk-lib';
-import * as CdkpipelinesSuomifi from '../lib/cdkpipelines-suomifi-stack';
+import { Template } from 'aws-cdk-lib/assertions';
+import { CdkpipelinesSuomifiStack } from '../lib/cdkpipelines-suomifi-stack';
 
-test('Empty Stack', () => {
+test('Stack creates successfully', () => {
     const app = new cdk.App();
-    // WHEN
-    const stack = new CdkpipelinesSuomifi.CdkpipelinesSuomifiStack(app, 'MyTestStack', "dev");
-    // THEN
-    expectCDK(stack).to(matchTemplate({
-      "Resources": {}
-    }, MatchStyle.EXACT))
+    const stack = new CdkpipelinesSuomifiStack(app, 'MyTestStack', 'dev', {
+        env: { account: '123456789012', region: 'eu-west-1' },
+    });
+    const template = Template.fromStack(stack);
+    template.resourceCountIs('AWS::ECS::Service', 1);
 });
