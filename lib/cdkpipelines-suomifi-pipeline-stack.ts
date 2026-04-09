@@ -1,8 +1,8 @@
 import { Construct } from "constructs";
-import { SecretValue, Stack, StackProps } from "aws-cdk-lib";
+import { Stack, StackProps } from "aws-cdk-lib";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
 import { CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep } from "aws-cdk-lib/pipelines";
 import { CdkpipelinesSuomifiStage } from "./cdkpipelines-suomifi-stage";
-import { GitHubTrigger } from "aws-cdk-lib/aws-codepipeline-actions";
 
 /**
  * The stack that defines the application pipeline
@@ -21,9 +21,9 @@ export class CdkpipelinesSuomifiPipelineStack extends Stack {
           ENVIRONMENT: environment,
         },
         // Where the source can be found
-        input: CodePipelineSource.gitHub("finnishtransportagency/hassu-suomifi", "main", {
-          authentication: SecretValue.secretsManager("github-token"),
-          trigger: environment === "dev" ? GitHubTrigger.WEBHOOK : GitHubTrigger.NONE,
+        input: CodePipelineSource.connection("finnishtransportagency/hassu-suomifi", "main", {
+          connectionArn: StringParameter.valueForStringParameter(this, "/outputs/GitHubConnectionArn"),
+          triggerOnPush: environment === "dev",
         }),
 
         commands: ["npm ci", "npm run build", "npm run cdk synth"],
