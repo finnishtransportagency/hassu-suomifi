@@ -55,7 +55,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         writer: rds.ClusterInstance.serverlessV2("writer"),
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup-pq-ver-17`,
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:dev-suomifiservice-snapshot-clustereb0386a7-fesjwy8zh1az`,
         snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
         serverlessV2AutoPauseDuration: Duration.minutes(30),
         serverlessV2MinCapacity: 0,
