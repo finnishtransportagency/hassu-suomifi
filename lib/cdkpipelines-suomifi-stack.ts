@@ -48,14 +48,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
     if (environment === "dev") {
       rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_14_20,
+          version: rds.AuroraPostgresEngineVersion.VER_17_7,
         }),
         vpc,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         writer: rds.ClusterInstance.serverlessV2("writer"),
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:283563576583:cluster-snapshot:keycloak-db-backup-pq-ver-17`,
         snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
         serverlessV2AutoPauseDuration: Duration.minutes(30),
         serverlessV2MinCapacity: 0,
@@ -64,14 +64,14 @@ export class CdkpipelinesSuomifiStack extends Stack {
     } else {
       rdsinstance = new rds.DatabaseClusterFromSnapshot(this, "Cluster", {
         engine: rds.DatabaseClusterEngine.auroraPostgres({
-          version: rds.AuroraPostgresEngineVersion.VER_14_20,
+          version: rds.AuroraPostgresEngineVersion.VER_17_7,
         }),
         vpc,
         vpcSubnets: {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
         writer: rds.ClusterInstance.serverlessV2("writer"),
-        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-pq-ver-14`,
+        snapshotIdentifier: `arn:aws:rds:eu-west-1:385766954911:cluster-snapshot:keycloak-db-backup-pq-ver-17`,
         snapshotCredentials: rds.SnapshotCredentials.fromGeneratedSecret("postgres"),
         serverlessV2MaxCapacity: 8,
         serverlessV2MinCapacity: 1,
