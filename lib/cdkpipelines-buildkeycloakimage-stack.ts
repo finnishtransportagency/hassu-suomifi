@@ -25,7 +25,7 @@ export class BuildKeyCloudImageStack extends Stack {
         LocalCacheMode.DOCKER_LAYER
       ),
       environment: {
-        buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+        buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
         privileged: true,
         computeType: ComputeType.SMALL,
       },
