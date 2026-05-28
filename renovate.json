@@ -1,0 +1,41 @@
+{
+  "extends": [
+    ":dependencyDashboard",
+    ":semanticPrefixFixDepsChoreOthers",
+    ":ignoreModulesAndTests",
+    ":autodetectPinVersions",
+    "workarounds:all"
+  ],
+  "timezone": "Europe/Helsinki",
+  "schedule": "after 6am and before 7am",
+  "updateNotScheduled": false,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  },
+  "major": {
+    "dependencyDashboardApproval": true
+  },
+  "npm": {
+    "enabled": true
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "excludePackagePatterns": ["^quay.io/keycloak"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm minor and patch dependencies",
+      "groupSlug": "npm-minor-patch"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["quay.io/keycloak/keycloak"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "keycloak minor and patch updates",
+      "groupSlug": "keycloak-minor-patch"
+    }
+  ]
+}
