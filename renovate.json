@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     ":dependencyDashboard",
     ":semanticPrefixFixDepsChoreOthers",
@@ -7,10 +8,10 @@
     "workarounds:all"
   ],
   "timezone": "Europe/Helsinki",
-  "schedule": "after 6am and before 7am",
+  "schedule": ["after 6am and before 7am"],
   "updateNotScheduled": false,
+  "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
-    "enabled": true,
     "labels": ["security"]
   },
   "major": {
@@ -22,10 +23,16 @@
   "dockerfile": {
     "enabled": true
   },
+  "docker-compose": {
+    "enabled": false
+  },
+  "nvm": {
+    "enabled": false
+  },
   "packageRules": [
     {
-      "matchPackagePatterns": ["*"],
-      "excludePackagePatterns": ["^quay.io/keycloak"],
+      "matchPackageNames": ["**"],
+      "excludePackageNames": ["/^quay\\.io\\/keycloak/"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "npm minor and patch dependencies",
       "groupSlug": "npm-minor-patch"
