@@ -4,7 +4,6 @@
     ":dependencyDashboard",
     ":semanticPrefixFixDepsChoreOthers",
     ":ignoreModulesAndTests",
-    ":autodetectPinVersions",
     "workarounds:all"
   ],
   "timezone": "Europe/Helsinki",
@@ -31,8 +30,7 @@
   },
   "packageRules": [
     {
-      "matchPackageNames": ["**"],
-      "excludePackageNames": ["/^quay\\.io\\/keycloak/"],
+      "matchPackageNames": ["**", "!/^quay\\.io\\/keycloak/"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "npm minor and patch dependencies",
       "groupSlug": "npm-minor-patch"
