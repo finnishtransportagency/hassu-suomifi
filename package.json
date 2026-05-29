@@ -21,7 +21,7 @@
     "@types/node": "16.18.40",
     "@types/node-fetch": "2.6.4",
     "constructs": "10.6.0",
-    "fast-xml-parser": "5.7.0",
+    "fast-xml-parser": "5.7.3",
     "jest": "30.3.0",
     "node-fetch": "2.6.7",
     "ts-jest": "^29.4.9",
