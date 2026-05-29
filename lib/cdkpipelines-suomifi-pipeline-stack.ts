@@ -1,13 +1,14 @@
 import { Construct } from "constructs";
-import {  SecretValue, Stack, StackProps } from "aws-cdk-lib";
-import { CodePipeline, CodePipelineSource, ShellStep } from "aws-cdk-lib/pipelines";
+import { Stack, StackProps } from "aws-cdk-lib";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
+import { CodePipeline, CodePipelineSource, ShellStep, ManualApprovalStep } from "aws-cdk-lib/pipelines";
 import { CdkpipelinesSuomifiStage } from "./cdkpipelines-suomifi-stage";
 
 /**
  * The stack that defines the application pipeline
  */
 export class CdkpipelinesSuomifiPipelineStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: StackProps, environment: string) {
     super(scope, id, props);
 
     const pipeline = new CodePipeline(this, "Pipeline", {
@@ -16,29 +17,44 @@ export class CdkpipelinesSuomifiPipelineStack extends Stack {
 
       // How it will be built and synthesized
       synth: new ShellStep("Synth", {
+        env: {
+          ENVIRONMENT: environment,
+        },
         // Where the source can be found
-        input: CodePipelineSource.gitHub(
-          "finnishtransportagency/hassu-suomifi",
-          "main",
-          {
-            authentication: SecretValue.secretsManager("github-token"),
-          }
-        ),
+        input: CodePipelineSource.connection("finnishtransportagency/hassu-suomifi", "main", {
+          connectionArn: StringParameter.valueForStringParameter(this, "/outputs/GitHubConnectionArn"),
+          triggerOnPush: environment === "dev",
+        }),
 
         commands: ["npm ci", "npm run build", "npm run cdk synth"],
         primaryOutputDirectory: "cdk.out",
       }),
     });
 
+    // create options where prod env will have manual approval pre step
+    const manualApprovalOptions =
+      environment === "dev"
+        ? {
+            pre: [new ManualApprovalStep("DeployToDev")],
+          }
+        : {
+            pre: [new ManualApprovalStep("DeployToProd")],
+          };
+
     // This is where we add the application stages
-    // ...
     pipeline.addStage(
-      new CdkpipelinesSuomifiStage(this, "Dev", {
-        env: {
-          account: process.env.CDK_DEFAULT_ACCOUNT,
-          region: process.env.CDK_DEFAULT_REGION,
+      new CdkpipelinesSuomifiStage(
+        this,
+        environment === "dev" ? "Dev" : "Prod",
+        {
+          env: {
+            account: process.env.CDK_DEFAULT_ACCOUNT,
+            region: process.env.CDK_DEFAULT_REGION,
+          },
         },
-      })
+        environment
+      ),
+      manualApprovalOptions
     );
   }
 }

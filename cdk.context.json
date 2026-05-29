@@ -27,5 +27,31 @@
   "security-group:account=283563576583:region=eu-west-1:securityGroupId=sg-0b57a0a831ff31953": {
     "securityGroupId": "sg-0b57a0a831ff31953",
     "allowAllOutbound": false
+  },
+  "vpc-provider:account=385766954911:filter.vpc-id=vpc-0c13923fe7e0f1834:region=eu-west-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0c13923fe7e0f1834",
+    "vpcCidrBlock": "10.108.22.0/24",
+    "ownerAccountId": "385766954911",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-0a064cb4c770ebecd",
+            "cidr": "10.108.22.0/25",
+            "availabilityZone": "eu-west-1a",
+            "routeTableId": "rtb-0ac58f59193c3b0e5"
+          },
+          {
+            "subnetId": "subnet-0a5acb3dd42c9b93a",
+            "cidr": "10.108.22.128/25",
+            "availabilityZone": "eu-west-1b",
+            "routeTableId": "rtb-0ac58f59193c3b0e5"
+          }
+        ]
+      }
+    ]
   }
 }

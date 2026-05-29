@@ -2,10 +2,9 @@ import fetch from "node-fetch";
 import { XMLParser } from "fast-xml-parser";
 
 async function fetchSigningCertificate() {
-  // Fetch saml metadata from https://static.apro.tunnistus.fi/static/metadata/idp-metadata.xml
-  const response = await fetch(
-    "https://static.apro.tunnistus.fi/static/metadata/idp-metadata.xml"
-  );
+  // Fetch saml metadata from test or production environment
+  const url = process.argv[2] === "prod" ? "https://tunnistus.suomi.fi/static/metadata/idp-metadata.xml" : "https://static.apro.tunnistus.fi/static/metadata/idp-metadata.xml";
+  const response = await fetch(url);
   const xml = await response.text();
   // Parse X509Certificate elements from the response xml using fast-xml-parser
   const parser = new XMLParser();

@@ -2,7 +2,15 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CdkpipelinesSuomifiPipelineStack } from '../lib/cdkpipelines-suomifi-pipeline-stack';
+import { FeatureBuildStack } from '../lib/cdkpipelines-featurebuild-stack';
 
+const validEnvironments = ["dev", "prod"];
+const environment = process.env.ENVIRONMENT;
+if (!environment) {
+  throw new Error("Environment variable ENVIRONMENT missing");
+} else if (validEnvironments.indexOf(environment) === -1) {
+  throw new Error(`Environment ${environment} not supported. Valid environments: ${validEnvironments.join(" ")}`);
+}
 const app = new cdk.App();
 new CdkpipelinesSuomifiPipelineStack(app, 'CdkpipelinesSuomifiPipelineStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
@@ -18,4 +26,10 @@ new CdkpipelinesSuomifiPipelineStack(app, 'CdkpipelinesSuomifiPipelineStack', {
   //env: { account: '123456789', region: 'eu-west-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+}, environment);
+
+if (environment === "dev") {
+  new FeatureBuildStack(app, "HassuSuomifiFeatureBuild", environment, {
+    env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+  });
+}

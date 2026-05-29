@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "node16",
     "target": "es2017",
     "typeRoots": [
       "node_modules/@types"
     ],
+    "types": ["jest", "node"],
     "sourceMap": true,
     "inlineSources": true,
     "sourceRoot": "/",
@@ -28,7 +29,7 @@
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true
