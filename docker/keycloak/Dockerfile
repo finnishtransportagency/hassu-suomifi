@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:26.6.2
+FROM quay.io/keycloak/keycloak:26.6.3
 
 # Realm importilla ei vaikuta olemassa oleviin ympäristöihin
 # https://www.keycloak.org/server/importExport#_importing_a_realm_during_startup
