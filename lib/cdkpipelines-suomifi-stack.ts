@@ -191,6 +191,18 @@ export class CdkpipelinesSuomifiStack extends Stack {
       "Allow ALB health check on Keycloak management port"
     );
 
+    ecsSecurityGroup.addIngressRule(
+      ecsSecurityGroup,
+      ec2.Port.tcp(7800),
+      "Allow JGroups clustering between Keycloak nodes"
+    );
+
+    ecsSecurityGroup.addIngressRule(
+      ecsSecurityGroup,
+      ec2.Port.tcp(57800),
+      "Allow JGroups failure detection between Keycloak nodes"
+    );
+
     const service = new ecs.FargateService(this, "Service", {
       cluster,
       taskDefinition,
@@ -198,6 +210,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
       minHealthyPercent: 100,
       maxHealthyPercent: 200,
       securityGroups: [securityGroup, ecsSecurityGroup],
+      healthCheckGracePeriod: Duration.seconds(180),
     });
 
     service.associateCloudMapService({
@@ -222,10 +235,10 @@ export class CdkpipelinesSuomifiStack extends Stack {
         port: "9000", // Health endpoints exposed on 9000 mgmt port by default 
         path: "/health/ready",
         protocol: loadbalance.Protocol.HTTP,
-        timeout: Duration.seconds(30),
+        timeout: Duration.seconds(15),
         unhealthyThresholdCount: 3,
         healthyThresholdCount: 3,
-        interval: Duration.seconds(60),
+        interval: Duration.seconds(30),
       },
     });
 
