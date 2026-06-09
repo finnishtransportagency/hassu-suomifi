@@ -235,7 +235,7 @@ export class CdkpipelinesSuomifiStack extends Stack {
         port: "9000", // Health endpoints exposed on 9000 mgmt port by default 
         path: "/health/ready",
         protocol: loadbalance.Protocol.HTTP,
-        timeout: Duration.seconds(30),
+        timeout: Duration.seconds(15),
         unhealthyThresholdCount: 3,
         healthyThresholdCount: 3,
         interval: Duration.seconds(30),
