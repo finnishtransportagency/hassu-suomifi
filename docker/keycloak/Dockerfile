@@ -15,4 +15,5 @@ COPY ./conf/keycloak/suomifi-realm-export.json /opt/keycloak/data/import/
 RUN /opt/keycloak/bin/kc.sh build
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+# Override in local env with e.g. CMD ["start-dev"]
 CMD ["start", "--optimized"]
