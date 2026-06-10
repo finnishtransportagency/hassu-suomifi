@@ -155,13 +155,10 @@ export class CdkpipelinesSuomifiStack extends Stack {
       environment: {
         ENV: `${environment}`,
         KC_HOSTNAME_STRICT: "false",
-        KC_HTTP_RELATIVE_PATH: "/keycloak/auth",
-        KC_DB: "postgres",
         KC_DB_URL_PORT: "5432",
         KC_DB_URL_DATABASE: "keycloak",
         KC_PROXY_HEADERS: "forwarded",
         KC_HTTP_ENABLED: "true",
-        KC_HTTP_MANAGEMENT_RELATIVE_PATH: "/",
         KC_HTTP_MANAGEMENT_SCHEME: "http",
       },
       secrets: {
