@@ -21,15 +21,15 @@
     "@types/node": "16.18.126",
     "@types/node-fetch": "2.6.13",
     "constructs": "10.8.1",
-    "fast-xml-parser": "5.10.1",
-    "jest": "30.4.2",
+    "fast-xml-parser": "5.11.1",
+    "jest": "30.5.0",
     "node-fetch": "2.7.0",
     "ts-jest": "^29.4.12",
     "ts-node": "10.9.2",
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "aws-cdk": "2.1125.0",
+    "aws-cdk": "2.1139.0",
     "aws-cdk-lib": "2.257.0",
     "source-map-support": "0.5.21"
   },
