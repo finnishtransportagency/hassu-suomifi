@@ -15,6 +15,7 @@
     "fetch-new-saml-certificates": "ts-node bin/fetch-new-saml-certificates.ts"
   },
   "devDependencies": {
+    "@aws-cdk/assert": "2.68.0",
     "@types/aws-lambda": "8.10.162",
     "@types/jest": "30.0.0",
     "@types/node": "16.18.126",
@@ -28,12 +29,9 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "aws-cdk": "2.1140.0",
-    "aws-cdk-lib": "2.269.0",
+    "aws-cdk": "2.1125.0",
+    "aws-cdk-lib": "2.257.0",
     "source-map-support": "0.5.21"
-  },
-  "overrides": {
-    "js-yaml": "3.15.2"
   },
   "engines": {
     "node": ">=22.22.1",
