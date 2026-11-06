@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:26.8.1
+FROM quay.io/keycloak/keycloak:26.8.2
 
 # Build-time optiot: docker run --rm quay.io/keycloak/keycloak:x.y.z build --help-all
 # (Runtime optiot: docker run --rm quay.io/keycloak/keycloak:x.y.z start --help-all)
