@@ -154,8 +154,6 @@ export class CdkpipelinesSuomifiStack extends Stack {
       ),
       environment: {
         ENV: `${environment}`,
-        // To mitigate possible CVE-2026-114938 - should be removed once Red Hat has released a fixed image
-        JAVA_OPTS_APPEND: "-XX:-UseBASE64Intrinsics",
         KC_HOSTNAME_STRICT: "false",
         KC_DB_URL_PORT: "5432",
         KC_DB_URL_DATABASE: "keycloak",
